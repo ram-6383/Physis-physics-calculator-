@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ohm's Law Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f4f8fc;
+      color: #333;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: auto;
+      background-color: #fff;
+      padding: 25px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: bold;
+      margin: 10px 0 5px;
+      display: block;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Ohm's Law Calculator<br><small>(V = IR)</small></h2>
+    <form method="post">
+      <label for="voltage">Voltage (V):</label>
+      <input type="number" id="voltage" name="voltage" step="any" required>
+
+      <label for="current">Current (I):</label>
+      <input type="number" id="current" name="current" step="any" required>
+
+      <button type="submit">Calculate Resistance</button>
+    </form>
+
+    {% if result %}
+      {% if result.resistance %}
+        <p class="result">Resistance: {{ result.resistance }} &Omega;</p>
+      {% else %}
+        <p class="error">{{ result.error }}</p>
+      {% endif %}
+    {% endif %}
+  </div>
+  <a href="{{ url_for('dashboard') }}" 
+  style="display:inline-block; margin-top:30px; padding:10px 20px; background:#3498db; color:white; border-radius:5px; text-decoration:none; font-weight:bold;">
+ ← Back to Dashboard
+</a>
+</body>
+</html>

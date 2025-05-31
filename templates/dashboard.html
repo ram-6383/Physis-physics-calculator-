@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Physis{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 0;
+  }
+
+  .dashboard-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    color: #003366;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  p {
+    text-align: center;
+    font-size: 16px;
+    color: #555;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+  }
+
+  li {
+    background-color: #f7f9fb;
+    margin-bottom: 12px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+  }
+
+  li:hover {
+    background-color: #e3eefc;
+  }
+
+  a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 500;
+    font-size: 16px;
+    display: block;
+  }
+
+  a:hover {
+    color: #0056b3;
+  }
+</style>
+
+<div class="dashboard-container">
+  <h2>Welcome, {{ username }}!</h2>
+  <p>Select a physics calculator or conversion from the menu.</p>
+
+  <ul>
+    <li><a href="{{ url_for('projectile') }}">Projectile Motion</a></li>
+    <li><a href="{{ url_for('kinetic_energy') }}">Kinetic Energy</a></li>
+    <li><a href="{{ url_for('specific_heat_capacity') }}">Specific Heat Capacity</a></li>
+    <li><a href="{{ url_for('ohms_law') }}">Ohm's Law</a></li>
+    <li><a href="{{ url_for('frequency_wavelength') }}">Frequency & Wavelength</a></li>
+    <li><a href="{{ url_for('currency_conversion') }}">Currency Conversion</a></li>
+    <li><a href="{{ url_for('energy_conversion') }}">Energy Conversion (J to eV)</a></li>
+    <li><a href="{{ url_for('time_conversion') }}">Time Conversion</a></li>
+    <li><a href="{{ url_for('speed_conversion') }}">Speed Conversion</a></li>
+    <li><a href="{{ url_for('litre_conversion') }}">Litre Conversion</a></li>
+    <li><a href="{{ url_for('volume_conversion') }}">Volume Conversion</a></li>
+    <li><a href="{{ url_for('basic_physics_conversion') }}">Basic Physics Conversion</a></li>
+    <li><a href="{{ url_for('temperature_conversion') }}">Temperature Conversion</a></li>
+  </ul>
+</div>
+{% endblock %}

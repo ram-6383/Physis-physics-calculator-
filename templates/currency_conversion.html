@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Currency Conversion</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fb;
+      color: #333;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #004080;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    input[type="number"],
+    select {
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #2b2b2b;
+      text-align: center;
+    }
+
+    a.back-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 6px 12px;
+      width: 2cm;
+      background: #3498db;
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Currency Conversion (Static Rates)</h2>
+
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" step="any" placeholder="Enter amount" />
+
+    <label for="fromCurrency">From:</label>
+    <select id="fromCurrency">
+      <option value="USD" data-country="United States">United States - USD</option>
+      <option value="EUR" data-country="Eurozone">Eurozone - EUR</option>
+      <option value="INR" data-country="India">India - INR</option>
+      <option value="GBP" data-country="United Kingdom">United Kingdom - GBP</option>
+      <option value="JPY" data-country="Japan">Japan - JPY</option>
+      <option value="AUD" data-country="Australia">Australia - AUD</option>
+      <option value="CAD" data-country="Canada">Canada - CAD</option>
+      <option value="CHF" data-country="Switzerland">Switzerland - CHF</option>
+      <option value="CNY" data-country="China">China - CNY</option>
+      <option value="NZD" data-country="New Zealand">New Zealand - NZD</option>
+      <option value="SGD" data-country="Singapore">Singapore - SGD</option>
+      <option value="KRW" data-country="South Korea">South Korea - KRW</option>
+      <option value="MXN" data-country="Mexico">Mexico - MXN</option>
+      <option value="ZAR" data-country="South Africa">South Africa - ZAR</option>
+      <option value="BRL" data-country="Brazil">Brazil - BRL</option>
+      <option value="RUB" data-country="Russia">Russia - RUB</option>
+      <option value="HKD" data-country="Hong Kong">Hong Kong - HKD</option>
+      <option value="SEK" data-country="Sweden">Sweden - SEK</option>
+      <option value="NOK" data-country="Norway">Norway - NOK</option>
+      <option value="TRY" data-country="Turkey">Turkey - TRY</option>
+    </select>
+
+    <label for="toCurrency">To:</label>
+    <select id="toCurrency">
+      <option value="USD" data-country="United States">United States - USD</option>
+      <option value="EUR" data-country="Eurozone">Eurozone - EUR</option>
+      <option value="INR" data-country="India">India - INR</option>
+      <option value="GBP" data-country="United Kingdom">United Kingdom - GBP</option>
+      <option value="JPY" data-country="Japan">Japan - JPY</option>
+      <option value="AUD" data-country="Australia">Australia - AUD</option>
+      <option value="CAD" data-country="Canada">Canada - CAD</option>
+      <option value="CHF" data-country="Switzerland">Switzerland - CHF</option>
+      <option value="CNY" data-country="China">China - CNY</option>
+      <option value="NZD" data-country="New Zealand">New Zealand - NZD</option>
+      <option value="SGD" data-country="Singapore">Singapore - SGD</option>
+      <option value="KRW" data-country="South Korea">South Korea - KRW</option>
+      <option value="MXN" data-country="Mexico">Mexico - MXN</option>
+      <option value="ZAR" data-country="South Africa">South Africa - ZAR</option>
+      <option value="BRL" data-country="Brazil">Brazil - BRL</option>
+      <option value="RUB" data-country="Russia">Russia - RUB</option>
+      <option value="HKD" data-country="Hong Kong">Hong Kong - HKD</option>
+      <option value="SEK" data-country="Sweden">Sweden - SEK</option>
+      <option value="NOK" data-country="Norway">Norway - NOK</option>
+      <option value="TRY" data-country="Turkey">Turkey - TRY</option>
+    </select>
+
+    <button onclick="convertCurrency()">Convert</button>
+    <p id="result"></p>
+  </div>
+
+  <a href="{{ url_for('dashboard') }}" 
+   style="
+     display: inline-block;
+     margin-top: 20px;
+     padding: 6px 12px;
+     background: #3498db;
+     color: white;
+     border-radius: 4px;
+     text-decoration: none;
+     font-weight: 600;
+     font-size: 0.9rem;
+     box-shadow: none;
+     cursor: pointer;
+   ">
+ ← Back to Dashboard
+</a>
+
+  <script>
+    // Static exchange rates relative to USD (approximate)
+    const rates = {
+      USD: 1,
+      EUR: 0.9,
+      INR: 82,
+      GBP: 0.78,
+      JPY: 134,
+      AUD: 1.45,
+      CAD: 1.32,
+      CHF: 0.91,
+      CNY: 7.3,
+      NZD: 1.54,
+      SGD: 1.35,
+      KRW: 1300,
+      MXN: 19.9,
+      ZAR: 18.1,
+      BRL: 5.3,
+      RUB: 75,
+      HKD: 7.8,
+      SEK: 10.5,
+      NOK: 10.9,
+      TRY: 26
+    };
+
+    function convertCurrency() {
+      const amount = parseFloat(document.getElementById("amount").value);
+      const fromSelect = document.getElementById("fromCurrency");
+      const toSelect = document.getElementById("toCurrency");
+      const from = fromSelect.value;
+      const to = toSelect.value;
+
+      if (isNaN(amount) || amount <= 0) {
+        document.getElementById("result").innerText = "Enter a valid positive amount.";
+        return;
+      }
+
+      const amountInUSD = amount / rates[from];
+      const converted = amountInUSD * rates[to];
+
+      // Get country names from selected options' data attributes
+      const fromCountry = fromSelect.options[fromSelect.selectedIndex].getAttribute("data-country");
+      const toCountry = toSelect.options[toSelect.selectedIndex].getAttribute("data-country");
+
+      document.getElementById("result").innerText = 
+        `${amount} ${from} (${fromCountry}) = ${converted.toFixed(2)} ${to} (${toCountry})`;
+    }
+  </script>
+</body>
+</html>

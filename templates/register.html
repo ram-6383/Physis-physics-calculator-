@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Register - Physis{% endblock %}
+
+{% block content %}
+<style>
+  /* Center the form container */
+  form {
+    max-width: 400px;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: #f0f4f8;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  h2 {
+    text-align: center;
+    color: #004080;
+    margin-bottom: 25px;
+    font-weight: 700;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    border-color: #007BFF;
+    outline: none;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 7px;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  p {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+  }
+
+  p a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  p a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<h2>Register</h2>
+<form method="POST" action="{{ url_for('register') }}">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required />
+    
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required />
+    
+    <button type="submit">Register</button>
+</form>
+<p>Already have an account? <a href="{{ url_for('login') }}">Login here</a>.</p>
+{% endblock %}

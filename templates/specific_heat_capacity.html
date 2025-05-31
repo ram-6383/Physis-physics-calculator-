@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Specific Heat Capacity</title>
+  <style>
+    /* Reset some default styles */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9fafb;
+      color: #333;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    form {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+      max-width: 400px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      margin-bottom: 20px;
+      font-size: 1rem;
+      color: #34495e;
+    }
+
+    input[type="number"] {
+      margin-top: 8px;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: 1.8px solid #ddd;
+      border-radius: 6px;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 6px #a9d6ff;
+    }
+
+    button {
+      width: 100%;
+      background-color: #3498db;
+      color: white;
+      font-weight: 700;
+      padding: 12px 0;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    p {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      text-align: center;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    p[style*="color: red"] {
+      color: #e74c3c !important;
+      font-weight: 700;
+    }
+
+    /* Back to Dashboard link styling */
+    a.back-link {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 25px;
+      background-color: #3498db;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+
+    a.back-link:hover {
+      background-color: #2980b9;
+      box-shadow: 0 6px 12px rgba(41, 128, 185, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <form method="post">
+    <h2>Specific Heat Capacity</h2>
+    <label>Mass (kg):
+      <input type="number" name="mass" step="any" placeholder="Enter mass in kilograms" required>
+    </label>
+    <label>Specific Heat (J/kg°C):
+      <input type="number" name="specific_heat" step="any" placeholder="Enter specific heat capacity" required>
+    </label>
+    <label>Temperature Change (ΔT °C):
+      <input type="number" name="change_temp" step="any" placeholder="Enter temperature change" required>
+    </label>
+    <button type="submit">Calculate Heat</button>
+    {% if result %}
+      {% if result.heat %}
+        <p>Heat Required: {{ result.heat }} J</p>
+      {% else %}
+        <p style="color: red;">{{ result.error }}</p>
+      {% endif %}
+    {% endif %}
+  </form>
+
+  <a href="{{ url_for('dashboard') }}" class="back-link">
+    ← Back to Dashboard
+  </a>
+</body>
+</html>
