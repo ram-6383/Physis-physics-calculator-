@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Exergy (Availability) Analysis</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: auto;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+    }
+
+    .formula {
+      background: #f0f4f8;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 18px;
+      background: #007bff;
+      color: white;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .visual {
+      margin-top: 25px;
+    }
+
+    #exergyPlot {
+      width: 100%;
+      height: 300px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 20px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      max-width: 260px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Exergy (Availability) Analysis</h2>
+
+  <div class="formula">
+    ΔΨ = (U₁ − U₀) + P₀(V₁ − V₀) − T₀(S₁ − S₀)
+  </div>
+
+  <form method="POST">
+
+    <label>System Internal Energy U₁:</label>
+    <input type="number" name="U1" step="any" required>
+
+    <label>Dead-State Internal Energy U₀:</label>
+    <input type="number" name="U0" step="any" required>
+
+    <label>System Volume V₁:</label>
+    <input type="number" name="V1" step="any" required>
+
+    <label>Dead-State Volume V₀:</label>
+    <input type="number" name="V0" step="any" required>
+
+    <label>System Entropy S₁:</label>
+    <input type="number" name="S1" step="any" required>
+
+    <label>Dead-State Entropy S₀:</label>
+    <input type="number" name="S0" step="any" required>
+
+    <label>Environmental Pressure P₀:</label>
+    <input type="number" name="P0" step="any" required>
+
+    <label>Environmental Temperature T₀:</label>
+    <input type="number" name="T0" step="any" required>
+
+    <button type="submit">Calculate Exergy Change</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        (U₁ − U₀) = {{ result.U1 - result.U0 }}<br>
+        P₀(V₁ − V₀) = {{ result.P0 * (result.V1 - result.V0) }}<br>
+        −T₀(S₁ − S₀) = {{ -result.T0 * (result.S1 - result.S0) }}<br><br>
+
+        <strong>Exergy Change (ΔΨ) = {{ result.delta_psi }}</strong>
+      </div>
+
+      <div class="visual">
+        <div id="exergyPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'exergyPlot',
+          [{
+            x: ['Energy Term', 'Flow Work Term', 'Entropy Term'],
+            y: [
+              {{ result.U1 - result.U0 }},
+              {{ result.P0 * (result.V1 - result.V0) }},
+              {{ -result.T0 * (result.S1 - result.S0) }}
+            ],
+            type: 'bar',
+            marker: { color: ['#3498db', '#2ecc71', '#e74c3c'] }
+          }],
+          {
+            title: 'Exergy Contribution Breakdown',
+            margin: { t: 40 }
+          },
+          { responsive: true }
+        );
+      </script>
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

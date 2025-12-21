@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Statistical Mechanics</title>
+
+  <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: auto;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 10px;
+    }
+
+    .formula {
+      background: #f0f4f8;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 9px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 25px;
+    }
+
+    #statPlot {
+      width: 100%;
+      min-height: 260px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 20px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      max-width: 260px;
+    }
+     @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Statistical Mechanics</h2>
+
+  <div class="formula">
+    S = k lnΩ &nbsp;&nbsp; | &nbsp;&nbsp;
+    U = (f / 2) nRT
+  </div>
+
+  <form method="POST">
+    <label>Number of Microstates (Ω):</label>
+    <input type="number" name="omega" step="any" required>
+
+    <label>Degrees of Freedom (f):</label>
+    <input type="number" name="f" step="any" required>
+
+    <label>Number of Moles (n):</label>
+    <input type="number" name="n" step="any" required>
+
+    <label>Temperature (T) in Kelvin:</label>
+    <input type="number" name="T" step="any" required>
+
+    <button type="submit">Calculate</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+
+      <!-- STEP-BY-STEP EXPLANATION -->
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        🔹 Entropy Calculation:<br>
+        S = k lnΩ = 1.38×10⁻²³ × ln({{ result.omega }})<br>
+        <strong>S = {{ result.entropy }} J/K</strong><br><br>
+
+        🔹 Internal Energy Calculation:<br>
+        U = (f / 2) nRT<br>
+        U = ({{ result.f }} / 2) × {{ result.n }} × 8.314 × {{ result.T }}<br>
+        <strong>U = {{ result.internal_energy }} J</strong>
+      </div>
+
+      <!-- VISUAL -->
+      <div class="visual">
+        <div id="statPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'statPlot',
+          [{
+            x: ['Entropy (S)', 'Internal Energy (U)'],
+            y: [{{ result.entropy }}, {{ result.internal_energy }}],
+            type: 'bar',
+            marker: { color: ['#e67e22', '#2ecc71'] }
+          }],
+          {
+            title: 'Statistical Mechanics Results',
+            margin: { t: 40 }
+          },
+          { responsive: true }
+        );
+      </script>
+
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

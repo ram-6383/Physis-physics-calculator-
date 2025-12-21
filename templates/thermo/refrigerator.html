@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Refrigerator COP</title>
+
+  <!-- REQUIRED for mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      word-wrap: break-word;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 10px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      margin: auto;
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      font-size: 1.35rem;
+      margin-bottom: 10px;
+    }
+
+    .formula {
+      background: #eef3ff;
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1rem;
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 18px;
+      background: #eaf2ff;
+      padding: 12px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    .result strong {
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 20px;
+    }
+
+    .visual h4 {
+      text-align: center;
+      font-size: 1rem;
+      margin-bottom: 6px;
+      color: #003366;
+    }
+
+    #copPlot {
+      width: 100%;
+      min-height: 240px;
+    }
+
+    .back-link {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      text-align: center;
+      font-size: 0.9rem;
+      max-width: 260px;
+    }
+
+    /* EXTRA SMALL SCREENS */
+    @media (max-width: 360px) {
+      h2 { font-size: 1.2rem; }
+      .formula { font-size: 0.95rem; }
+      .result { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Refrigerator – COP Calculation</h2>
+
+  <div class="formula">
+    COP = Q<sub>c</sub> / W
+  </div>
+
+  <form method="POST">
+    <label>Heat Extracted from Cold Reservoir (Q<sub>c</sub>) in Joules:</label>
+    <input type="number" name="qc" step="any" required>
+
+    <label>Work Input (W) in Joules:</label>
+    <input type="number" name="work" step="any" required>
+
+    <button type="submit">Calculate COP</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        1️⃣ Heat extracted from cold reservoir, Q<sub>c</sub> = {{ result.qc }} J<br>
+        2️⃣ Work input, W = {{ result.work }} J<br><br>
+
+        3️⃣ Formula used:<br>
+        COP = Q<sub>c</sub> / W<br><br>
+
+        4️⃣ Substitution:<br>
+        COP = {{ result.qc }} / {{ result.work }}<br><br>
+
+        <strong>Final Result:</strong><br>
+        COP = <strong>{{ result.cop }}</strong>
+      </div>
+
+      <div class="visual">
+        <h4>Energy Comparison</h4>
+        <div id="copPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'copPlot',
+          [{
+            x: ['Heat Removed (Qc)', 'Work Input (W)'],
+            y: [{{ result.qc }}, {{ result.work }}],
+            type: 'bar',
+            marker: { color: ['#16a085', '#e74c3c'] }
+          }],
+          {
+            yaxis: { title: 'Energy (J)' },
+            margin: { t: 30, l: 45, r: 20, b: 50 }
+          },
+          { responsive: true }
+        );
+      </script>
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

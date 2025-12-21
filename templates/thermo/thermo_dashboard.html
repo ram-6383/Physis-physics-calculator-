@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Thermodynamics Dashboard</title>
+   <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      padding: 40px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 30px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 15px;
+    }
+
+    a.calc-link {
+      display: block;
+      padding: 14px 20px;
+      background: #0dc6cf;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 17px;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    a.calc-link:hover {
+      background: #0056b3;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Thermodynamics Calculations</h2>
+
+    <ul>
+<li><a class="calc-link" href="{{ url_for('zeroth_law') }}">Zeroth Law of Thermodynamics</a></li>
+<li><a class="calc-link" href="{{ url_for('first_law') }}">First Law of Thermodynamics</a></li>
+<li><a class="calc-link" href="{{ url_for('internal_energy') }}">Internal Energy</a></li>
+<li><a class="calc-link" href="{{ url_for('enthalpy') }}">Enthalpy Change</a></li>
+<li><a class="calc-link" href="{{ url_for('ideal_gas') }}">Ideal Gas Equation</a></li>
+<li><a class="calc-link" href="{{ url_for('cp_cv') }}">Cp & Cv (Specific Heats)</a></li>
+<li><a class="calc-link" href="{{ url_for('work_done') }}">Work Done (P–V Process)</a></li>
+<li><a class="calc-link" href="{{ url_for('entropy') }}">Entropy Change</a></li>
+<li><a class="calc-link" href="{{ url_for('heat_engine') }}">Heat Engine Efficiency</a></li>
+<li><a class="calc-link" href="{{ url_for('carnot_engine') }}">Carnot Engine</a></li>
+<li><a class="calc-link" href="{{ url_for('refrigerator') }}">Refrigerator (COP)</a></li>
+<li><a class="calc-link" href="{{ url_for('advanced_cycles') }}">Advanced Thermodynamic Cycles</a></li>
+<li><a class="calc-link" href="{{ url_for('advanced_efficiency') }}">Advanced Efficiencies (Diesel & COP)</a></li>
+<li><a class="calc-link" href="{{ url_for('thermo_process') }}">Thermodynamic Processes</a></li>
+<li><a class="calc-link" href="{{ url_for('real_gas') }}">Real Gas</a></li>
+<li><a class="calc-link" href="{{ url_for('phase') }}">Phase Transition</a></li>
+<li><a class="calc-link" href="{{ url_for('stability') }}">Thermodynamic Stability</a></li>
+<li><a class="calc-link" href="{{ url_for('gibbs_free_energy') }}">Gibbs Free Energy</a></li>
+<li><a class="calc-link" href="{{ url_for('helmholtz') }}">Helmholtz Free Energy</a></li>
+<li><a class="calc-link" href="{{ url_for('legendre') }}">Legendre Transformations</a></li>
+<li><a class="calc-link" href="{{ url_for('maxwell') }}">Maxwell Relations</a></li>
+<li><a class="calc-link" href="{{ url_for('statistical') }}">Statistical Mechanics</a></li>
+<li><a class="calc-link" href="{{ url_for('chem_phase_eq') }}">Chemical & Phase Equilibrium</a></li>
+<li><a class="calc-link" href="{{ url_for('multi_component_eq') }}">Multi-Component & Chemical Equilibrium</a></li>
+<li><a class="calc-link" href="{{ url_for('thermochemistry') }}">Thermochemistry & Solution Laws</a></li>
+<li><a class="calc-link" href="{{ url_for('fugacity_activity') }}">Fugacity & Activity</a></li>
+<li><a class="calc-link" href="{{ url_for('non_ideal_mixture') }}">Non-Ideal & Mixture Calculations</a></li>
+<li><a class="calc-link" href="{{ url_for('heat_transfer_adv') }}">Advanced Heat Transfer</a></li>
+<li><a class="calc-link" href="{{ url_for('non_equilibrium') }}">Non-Equilibrium & Transport</a></li>
+<li><a class="calc-link" href="{{ url_for('fluctuation_noise') }}">Fluctuation & Noise</a></li>
+<li><a class="calc-link" href="{{ url_for('turbulence_thermo') }}">Turbulence & Flow Thermodynamics</a></li>
+<li><a class="calc-link" href="{{ url_for('exergy') }}">Exergy (Availability) Analysis</a></li>
+<li><a class="calc-link" href="{{ url_for('surface_interface') }}">Surface & Interface Thermodynamics</a></li>
+<li><a class="calc-link" href="{{ url_for('advanced_properties') }}">Advanced Property Relations</a></li>
+<li><a class="calc-link" href="{{ url_for('advanced_materials') }}">Advanced Property & Material Calculations</a></li>
+<li><a class="calc-link" href="{{ url_for('molecular_simulation') }}">Molecular & Statistical Simulations</a></li>
+<li><a class="calc-link" href="{{ url_for('info_thermo') }}">Information-Theoretic Thermodynamics</a></li>
+<li><a class="calc-link" href="{{ url_for('relativistic_quantum') }}">Relativistic & Quantum Thermodynamics</a></li>
+<li><a class="calc-link" href="{{ url_for('superconductivity') }}">Superconductivity & Phase Transitions</a></li>
+<li><a class="calc-link" href="{{ url_for('plasma_astro') }}">Plasma & Astrophysical Thermodynamics</a></li>
+<li><a class="calc-link" href="{{ url_for('bio_chem_thermo') }}">Biological & Chemical Thermodynamics</a></li>
+
+    </ul>
+
+    <a class="back" href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+  </div>
+
+</body>
+</html>

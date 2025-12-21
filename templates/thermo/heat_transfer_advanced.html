@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Advanced Heat Transfer</title>
+
+  <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: auto;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 10px;
+    }
+
+    .formula {
+      background: #f0f4f8;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 9px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 25px;
+    }
+
+    #heatPlot {
+      width: 100%;
+      min-height: 280px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 20px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      max-width: 260px;
+    }
+     @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Advanced Heat Transfer</h2>
+
+  <div class="formula">
+    Fourier’s Law: Q/t = kAΔT / dx <br>
+    Linear Expansion: L = L₀(1 + αΔT) <br>
+    Wien’s Law: λ<sub>max</sub>T = b
+  </div>
+
+  <form method="POST">
+    <label>Thermal Conductivity (k) [W/m·K]:</label>
+    <input type="number" name="k" step="any" required>
+
+    <label>Area (A) [m²]:</label>
+    <input type="number" name="A" step="any" required>
+
+    <label>Temperature Difference (ΔT) [K]:</label>
+    <input type="number" name="dT" step="any" required>
+
+    <label>Thickness (dx) [m]:</label>
+    <input type="number" name="dx" step="any" required>
+
+    <label>Original Length (L₀) [m]:</label>
+    <input type="number" name="L0" step="any" required>
+
+    <label>Coefficient of Expansion (α) [1/K]:</label>
+    <input type="number" name="alpha" step="any" required>
+
+    <label>Temperature for Radiation (T) [K]:</label>
+    <input type="number" name="T" step="any" required>
+
+    <button type="submit">Calculate</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+
+      <!-- STEP-BY-STEP EXPLANATION -->
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        🔹 Heat Conduction (Fourier’s Law):<br>
+        Q/t = kAΔT / dx = {{ result.heat_rate }} W<br><br>
+
+        🔹 Thermal Expansion:<br>
+        L = L₀(1 + αΔT) = {{ result.expanded_length }} m<br><br>
+
+        🔹 Wien’s Displacement Law:<br>
+        λ<sub>max</sub> = b / T = {{ result.lambda_max }} m
+      </div>
+
+      <!-- VISUAL -->
+      <div class="visual">
+        <div id="heatPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'heatPlot',
+          [{
+            x: ['Heat Rate (W)', 'Expanded Length (m)', 'λmax (m)'],
+            y: [
+              {{ result.heat_rate }},
+              {{ result.expanded_length }},
+              {{ result.lambda_max }}
+            ],
+            type: 'bar',
+            marker: { color: ['#e67e22', '#3498db', '#2ecc71'] }
+          }],
+          {
+            title: 'Advanced Heat Transfer Results',
+            margin: { t: 40 }
+          },
+          { responsive: true }
+        );
+      </script>
+
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

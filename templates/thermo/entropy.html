@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Entropy Change</title>
+
+  <!-- Mobile support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      margin: auto;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 10px;
+      font-size: 1.4rem;
+    }
+
+    .formula {
+      background: #eef3ff;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 24px;
+    }
+
+    .visual h4 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #003366;
+      font-size: 1.05rem;
+    }
+
+    #entropyPlot {
+      width: 100%;
+      min-height: 260px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 22px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      max-width: 260px;
+    }
+
+    @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Entropy Change Calculation</h2>
+
+  <div class="formula">
+    ΔS = Q / T
+  </div>
+
+  <form method="POST">
+    <label>Heat Transferred (Q) in Joules:</label>
+    <input type="number" name="heat" step="any" required>
+
+    <label>Temperature (T) in Kelvin:</label>
+    <input type="number" name="temperature" step="any" required>
+
+    <button type="submit">Calculate Entropy Change</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        1️⃣ Given Heat Transferred, Q = {{ result.heat }} J<br>
+        2️⃣ Given Temperature, T = {{ result.temperature }} K<br><br>
+
+        3️⃣ Entropy formula:<br>
+        &nbsp;&nbsp;ΔS = Q / T<br><br>
+
+        4️⃣ Substitution:<br>
+        &nbsp;&nbsp;ΔS = {{ result.heat }} / {{ result.temperature }}<br><br>
+
+        <strong>Final Result:</strong><br>
+        Entropy Change = <strong>{{ result.entropy }} J/K</strong>
+      </div>
+
+      <div class="visual">
+        <h4>Heat Transfer vs Entropy Change</h4>
+        <div id="entropyPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'entropyPlot',
+          [{
+            x: ['Heat (Q)', 'Entropy Change (ΔS)'],
+            y: [{{ result.heat }}, {{ result.entropy }}],
+            type: 'bar',
+            marker: { color: ['#e67e22', '#16a085'] }
+          }],
+          {
+            yaxis: { title: 'Magnitude' },
+            margin: { t: 30, l: 50, r: 20, b: 60 }
+          },
+          { responsive: true }
+        );
+      </script>
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

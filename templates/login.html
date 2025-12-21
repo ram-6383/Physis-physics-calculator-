@@ -2,6 +2,8 @@
 {% block title %}Login - Physis{% endblock %}
 
 {% block content %}
+ <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   .login-container {
     max-width: 400px;
@@ -64,6 +66,14 @@
   a:hover {
     text-decoration: underline;
   }
+   @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
+    }
 </style>
 
 <div class="login-container">

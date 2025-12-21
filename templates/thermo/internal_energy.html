@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Internal Energy</title>
+
+  <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      margin: auto;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+
+    .formula {
+      background: #f0f4f8;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 25px;
+    }
+
+    .visual h4 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #003366;
+      font-size: 1.05rem;
+    }
+
+    #energyPlot {
+      width: 100%;
+      min-height: 260px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 22px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      max-width: 260px;
+    }
+
+    @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Internal Energy</h2>
+
+  <div class="formula">
+    U = (f / 2) nRT
+  </div>
+
+  <form method="POST">
+    <label>Degrees of Freedom (f):</label>
+    <input type="number" name="f" step="any" required>
+
+    <label>Number of Moles (n):</label>
+    <input type="number" name="n" step="any" required>
+
+    <label>Temperature (T) in Kelvin:</label>
+    <input type="number" name="T" step="any" required>
+
+    <button type="submit">Calculate Internal Energy</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+
+      <!-- STEP-BY-STEP EXPLANATION -->
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        1️⃣ Degrees of freedom (f) = {{ result.f }}<br>
+        2️⃣ Number of moles (n) = {{ result.n }} mol<br>
+        3️⃣ Temperature (T) = {{ result.T }} K<br>
+        4️⃣ Gas constant (R) = 8.314 J/mol·K<br><br>
+
+        5️⃣ Formula used:<br>
+        &nbsp;&nbsp;U = (f / 2) × n × R × T<br><br>
+
+        6️⃣ Substitution:<br>
+        &nbsp;&nbsp;U = ({{ result.f }} / 2) × {{ result.n }} × 8.314 × {{ result.T }}<br><br>
+
+        <strong>Internal Energy (U) = {{ result.U }} J</strong>
+      </div>
+
+      <!-- VISUAL -->
+      <div class="visual">
+        <h4>Visual Representation</h4>
+        <div id="energyPlot"></div>
+      </div>
+
+      <script>
+        const f = {{ result.f }};
+        const n = {{ result.n }};
+        const T = {{ result.T }};
+        const U = {{ result.U }};
+
+        Plotly.newPlot(
+          'energyPlot',
+          [{
+            x: ['Degrees of Freedom', 'Moles', 'Temperature', 'Internal Energy'],
+            y: [f, n, T, U],
+            type: 'bar',
+            marker: {
+              color: ['#9b59b6', '#3498db', '#e67e22', '#2ecc71']
+            }
+          }],
+          {
+            margin: { t: 30, l: 40, r: 20, b: 40 }
+          },
+          { responsive: true }
+        );
+      </script>
+
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

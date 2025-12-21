@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>First Law of Thermodynamics</title>
+  <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 25px;
+      background: #eaf2ff;
+      padding: 15px;
+      border-radius: 8px;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .visual {
+      margin-top: 30px;
+    }
+
+    .visual h4 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #003366;
+    }
+
+    /* Mobile optimization */
+     @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>First Law of Thermodynamics</h2>
+
+  <form method="POST">
+    <label>Heat Supplied (Q) in Joules:</label>
+    <input type="number" name="heat" step="any" required>
+
+    <label>Work Done (W) in Joules:</label>
+    <input type="number" name="work" step="any" required>
+
+    <button type="submit">Calculate</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        1️⃣ Given Heat Supplied, Q = {{ result.Q }} J<br>
+        2️⃣ Given Work Done, W = {{ result.W }} J<br>
+        3️⃣ First Law of Thermodynamics:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;ΔU = Q − W<br>
+        4️⃣ Substituting values:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;ΔU = {{ result.Q }} − {{ result.W }}<br><br>
+
+        <strong>✅ Change in Internal Energy:</strong><br>
+        ΔU = <strong>{{ result.deltaU }} Joules</strong>
+      </div>
+
+      <!-- VISUAL SECTION -->
+      <div class="visual">
+        <h4>Energy Balance Visualization</h4>
+        <div id="energyPlot"></div>
+      </div>
+
+      <script>
+        const Q = {{ result.Q }};
+        const W = {{ result.W }};
+        const deltaU = {{ result.deltaU }};
+
+        const data = [{
+          x: ['Heat Supplied (Q)', 'Work Done (W)', 'Change in Internal Energy (ΔU)'],
+          y: [Q, W, deltaU],
+          type: 'bar',
+          marker: {
+            color: ['#3498db', '#e74c3c', '#2ecc71']
+          }
+        }];
+
+        const layout = {
+          title: 'First Law Energy Distribution',
+          yaxis: { title: 'Energy (Joules)' },
+          margin: { t: 50, l: 50, r: 20, b: 50 },
+          responsive: true
+        };
+
+        Plotly.newPlot('energyPlot', data, layout, {responsive: true});
+      </script>
+
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" 
+     style="display:inline-block; margin-top:25px; padding:10px 20px; background:#28a745; color:white; border-radius:6px; text-decoration:none;">
+     ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

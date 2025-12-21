@@ -2,6 +2,11 @@
 <html>
 <head>
   <title>Projectile Motion Calculator</title>
+ <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Plotly CDN (NEW – for visualization) -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -39,10 +44,6 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #0056b3;
     }
     #result {
       margin-top: 25px;
@@ -54,63 +55,118 @@
       border: 1px solid #b8d1ff;
       line-height: 1.6;
     }
-    #result.error {
-      color: #b72c2c;
-      background-color: #ffd6d6;
-      border-color: #ff9e9e;
+
+    /* NEW STYLES */
+    #steps {
+      margin-top: 25px;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    #plot {
+      margin-top: 30px;
+    }
+     @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
+
 <body>
   <h2>Projectile Motion Calculator</h2>
-  <label for="velocity">Initial Velocity (m/s):</label>
-  <input type="number" id="velocity" step="any" placeholder="Enter initial velocity" />
 
-  <label for="angle">Angle (degrees):</label>
-  <input type="number" id="angle" step="any" placeholder="Enter angle between 0 and 90" />
+  <label>Initial Velocity (m/s):</label>
+  <input type="number" id="velocity" step="any">
+
+  <label>Angle (degrees):</label>
+  <input type="number" id="angle" step="any">
 
   <button onclick="calculateProjectile()">Calculate</button>
 
   <p id="result"></p>
 
-  <a href="{{ url_for('dashboard') }}" 
-  style="display:inline-block; margin-top:30px; padding:10px 20px; background:#3498db; color:white; border-radius:5px; text-decoration:none; font-weight:bold;">
- ← Back to Dashboard
-</a>
+  <!-- STEP-BY-STEP EXPLANATION (NEW) -->
+  <div id="steps"></div>
+
+  <!-- VISUAL REPRESENTATION (NEW) -->
+  <div id="plot"></div>
+
+  <a href="{{ url_for('dashboard') }}"
+     style="display:inline-block; margin-top:30px; padding:10px 20px;
+     background:#3498db; color:white; border-radius:5px; text-decoration:none;">
+    ← Back to Dashboard
+  </a>
 
   <script>
     function calculateProjectile() {
       const u = parseFloat(document.getElementById("velocity").value);
       const angle = parseFloat(document.getElementById("angle").value);
-      const resultEl = document.getElementById("result");
-
-      if (isNaN(u) || u <= 0) {
-        resultEl.innerText = "Please enter a valid positive initial velocity.";
-        resultEl.className = "error";
-        return;
-      }
-
-      if (isNaN(angle) || angle < 0 || angle > 90) {
-        resultEl.innerText = "Please enter a valid angle between 0 and 90 degrees.";
-        resultEl.className = "error";
-        return;
-      }
 
       const g = 9.8;
       const rad = angle * Math.PI / 180;
 
-      const time = (2 * u * Math.sin(rad)) / g;
-      const range = (u * u * Math.sin(2 * rad)) / g;
-      const maxHeight = (u * u * Math.pow(Math.sin(rad), 2)) / (2 * g);
+      const T = (2 * u * Math.sin(rad)) / g;
+      const R = (u * u * Math.sin(2 * rad)) / g;
+      const H = (u * u * Math.pow(Math.sin(rad), 2)) / (2 * g);
 
-      resultEl.className = "";
-      resultEl.innerHTML = `
-        Time of Flight: <strong>${time.toFixed(2)} s</strong><br>
-        Horizontal Range: <strong>${range.toFixed(2)} m</strong><br>
-        Maximum Height: <strong>${maxHeight.toFixed(2)} m</strong>
+      document.getElementById("result").innerHTML = `
+        Time of Flight: <b>${T.toFixed(2)} s</b><br>
+        Range: <b>${R.toFixed(2)} m</b><br>
+        Maximum Height: <b>${H.toFixed(2)} m</b>
       `;
+
+      /* STEP-BY-STEP EXPLANATION */
+      document.getElementById("steps").innerHTML = `
+        <b>Step-by-Step Explanation:</b><br>
+        1. Initial velocity (u) = ${u} m/s<br>
+        2. Angle (θ) = ${angle}°<br>
+        3. Gravity (g) = 9.8 m/s²<br><br>
+
+        <b>Formulas Used:</b><br>
+        Time of Flight = (2u sinθ) / g<br>
+        Range = (u² sin2θ) / g<br>
+        Maximum Height = (u² sin²θ) / (2g)<br><br>
+
+        <b>Result Interpretation:</b><br>
+        The projectile stays in air for ${T.toFixed(2)} seconds,
+        travels ${R.toFixed(2)} meters horizontally,
+        and reaches a maximum height of ${H.toFixed(2)} meters.
+      `;
+
+      /* VISUALIZATION USING PLOTLY */
+      let t = [];
+      let x = [];
+      let y = [];
+
+      for (let i = 0; i <= T; i += T / 50) {
+        t.push(i);
+        x.push(u * Math.cos(rad) * i);
+        y.push(u * Math.sin(rad) * i - 0.5 * g * i * i);
+      }
+
+      const trace = {
+        x: x,
+        y: y,
+        mode: 'lines',
+        name: 'Trajectory'
+      };
+
+      const layout = {
+        title: 'Projectile Trajectory',
+        xaxis: { title: 'Distance (m)' },
+        yaxis: { title: 'Height (m)' }
+      };
+
+      Plotly.newPlot('plot', [trace], layout);
     }
-    
   </script>
 </body>
 </html>

@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Basic Physics Conversion</title>
+   <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f0f4f8;
-      margin: 0;
       padding: 40px;
       color: #333;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 35px;
       color: #004080;
     }
 
@@ -24,7 +25,7 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       padding: 25px;
       margin: 20px auto;
-      max-width: 500px;
+      max-width: 520px;
     }
 
     .conversion h4 {
@@ -34,7 +35,7 @@
 
     input[type="number"] {
       padding: 10px;
-      width: 60%;
+      width: 65%;
       border: 1px solid #ccc;
       border-radius: 5px;
       font-size: 16px;
@@ -56,54 +57,131 @@
       background-color: #0056b3;
     }
 
-    p {
+    p.result {
       margin-top: 15px;
       font-weight: bold;
       font-size: 17px;
-      color: #333;
+    }
+
+    p.steps {
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.6;
+      background: #eef4ff;
+      padding: 10px;
+      border-radius: 6px;
+    }
+     @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
+
 <body>
-  <h2>Basic Physics Conversions</h2>
+<h2>Basic Physics Conversions</h2>
 
-  <div class="conversion">
-    <h4>Newton to Dyne</h4>
-    <input type="number" id="newton" placeholder="Enter Newton">
-    <button onclick="convertND()">Convert</button>
-    <p id="ndResult"></p>
-  </div>
+<!-- Newton to Dyne -->
+<div class="conversion">
+  <h4>Newton to Dyne</h4>
+  <input type="number" id="newton" placeholder="Enter Newton">
+  <button onclick="convertND()">Convert</button>
+  <p class="result" id="ndResult"></p>
+  <p class="steps" id="ndSteps"></p>
+</div>
 
-  <div class="conversion">
-    <h4>Joule to Calorie</h4>
-    <input type="number" id="joule" placeholder="Enter Joule">
-    <button onclick="convertJC()">Convert</button>
-    <p id="jcResult"></p>
-  </div>
-  <a href="{{ url_for('dashboard') }}" 
-  style="display:inline-block; margin-top:30px; padding:10px 20px; background:#3498db; color:white; border-radius:5px; text-decoration:none; font-weight:bold;">
+<!-- Joule to Calorie -->
+<div class="conversion">
+  <h4>Joule to Calorie</h4>
+  <input type="number" id="joule" placeholder="Enter Joule">
+  <button onclick="convertJC()">Convert</button>
+  <p class="result" id="jcResult"></p>
+  <p class="steps" id="jcSteps"></p>
+</div>
+
+<!-- Pascal to Atmosphere -->
+<div class="conversion">
+  <h4>Pascal to Atmosphere</h4>
+  <input type="number" id="pascal" placeholder="Enter Pascal">
+  <button onclick="convertPA()">Convert</button>
+  <p class="result" id="paResult"></p>
+  <p class="steps" id="paSteps"></p>
+</div>
+
+<!-- Watt to Horsepower -->
+<div class="conversion">
+  <h4>Watt to Horsepower</h4>
+  <input type="number" id="watt" placeholder="Enter Watt">
+  <button onclick="convertWH()">Convert</button>
+  <p class="result" id="whResult"></p>
+  <p class="steps" id="whSteps"></p>
+</div>
+
+<!-- eV to Joule -->
+<div class="conversion">
+  <h4>Electron Volt to Joule</h4>
+  <input type="number" id="ev" placeholder="Enter eV">
+  <button onclick="convertEV()">Convert</button>
+  <p class="result" id="evResult"></p>
+  <p class="steps" id="evSteps"></p>
+</div>
+
+<a href="{{ url_for('dashboard') }}"
+ style="display:inline-block; margin-top:30px; padding:10px 20px;
+ background:#3498db; color:white; border-radius:5px;
+ text-decoration:none; font-weight:bold;">
  ← Back to Dashboard
 </a>
-<script>
-    function convertND() {
-      const val = parseFloat(document.getElementById("newton").value);
-      if (isNaN(val)) {
-        document.getElementById("ndResult").innerText = "Please enter a valid number.";
-        return;
-      }
-      const result = val * 1e5;
-      document.getElementById("ndResult").innerText = `${val} N = ${result.toLocaleString()} dyne`;
-    }
 
-    function convertJC() {
-      const val = parseFloat(document.getElementById("joule").value);
-      if (isNaN(val)) {
-        document.getElementById("jcResult").innerText = "Please enter a valid number.";
-        return;
-      }
-      const result = val / 4.184;
-      document.getElementById("jcResult").innerText = `${val} J = ${result.toFixed(4)} cal`;
-    }
-  </script>
+<script>
+function convertND() {
+  const v = parseFloat(newton.value);
+  if (isNaN(v)) return ndResult.innerText = "Enter a valid value.";
+  const r = v * 1e5;
+  ndResult.innerText = `${r} dyne`;
+  ndSteps.innerHTML =
+    `1 N = 10⁵ dyne<br>⇒ ${v} × 10⁵ = ${r}`;
+}
+
+function convertJC() {
+  const v = parseFloat(joule.value);
+  if (isNaN(v)) return jcResult.innerText = "Enter a valid value.";
+  const r = v / 4.184;
+  jcResult.innerText = `${r.toFixed(4)} cal`;
+  jcSteps.innerHTML =
+    `1 cal = 4.184 J<br>⇒ ${v} ÷ 4.184 = ${r.toFixed(4)}`;
+}
+
+function convertPA() {
+  const v = parseFloat(pascal.value);
+  if (isNaN(v)) return paResult.innerText = "Enter a valid value.";
+  const r = v / 101325;
+  paResult.innerText = `${r.toExponential(3)} atm`;
+  paSteps.innerHTML =
+    `1 atm = 101325 Pa<br>⇒ ${v} ÷ 101325`;
+}
+
+function convertWH() {
+  const v = parseFloat(watt.value);
+  if (isNaN(v)) return whResult.innerText = "Enter a valid value.";
+  const r = v / 746;
+  whResult.innerText = `${r.toFixed(4)} hp`;
+  whSteps.innerHTML =
+    `1 hp = 746 W<br>⇒ ${v} ÷ 746`;
+}
+
+function convertEV() {
+  const v = parseFloat(ev.value);
+  if (isNaN(v)) return evResult.innerText = "Enter a valid value.";
+  const r = v * 1.602e-19;
+  evResult.innerText = `${r.toExponential(3)} J`;
+  evSteps.innerHTML =
+    `1 eV = 1.602×10⁻¹⁹ J<br>⇒ ${v} × 1.602×10⁻¹⁹`;
+}
+</script>
 </body>
 </html>

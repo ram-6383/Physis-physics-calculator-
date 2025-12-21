@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Currency Conversion</title>
+   <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,13 +13,14 @@
       padding: 40px;
       display: flex;
       justify-content: center;
+      gap: 40px;
     }
 
     .container {
       background: #fff;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       width: 100%;
       max-width: 400px;
     }
@@ -31,10 +34,10 @@
     label {
       font-weight: bold;
       margin-top: 10px;
+      display: block;
     }
 
-    input[type="number"],
-    select {
+    input, select {
       padding: 10px;
       width: 100%;
       font-size: 16px;
@@ -64,37 +67,56 @@
       margin-top: 20px;
       font-size: 18px;
       font-weight: bold;
-      color: #2b2b2b;
       text-align: center;
     }
 
-    a.back-link {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 6px 12px;
-      width: 2cm;
-      background: #3498db;
-      color: white;
-      border-radius: 4px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-align: center;
-      box-sizing: border-box;
-      cursor: pointer;
+    #steps {
+      margin-top: 15px;
+      font-size: 14px;
+      line-height: 1.6;
     }
+
+    canvas {
+      margin-top: 20px;
+    }
+    .back-btn {
+  display: inline-block;
+  margin-top: 25px;
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  text-align: center;
+}
+
+.back-btn:hover {
+  background-color: #217dbb;
+}
+ @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
+    }
+
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <h2>Currency Conversion (Static Rates)</h2>
 
-    <label for="amount">Amount:</label>
-    <input type="number" id="amount" step="any" placeholder="Enter amount" />
+<div class="container">
+  <h2>Currency Conversion (Static Rates)</h2>
 
-    <label for="fromCurrency">From:</label>
-    <select id="fromCurrency">
-      <option value="USD" data-country="United States">United States - USD</option>
+  <label>Amount:</label>
+  <input type="number" id="amount" step="any">
+
+  <label>From:</label>
+  <select id="fromCurrency">
+   <option value="USD" data-country="United States">United States - USD</option>
       <option value="EUR" data-country="Eurozone">Eurozone - EUR</option>
       <option value="INR" data-country="India">India - INR</option>
       <option value="GBP" data-country="United Kingdom">United Kingdom - GBP</option>
@@ -114,11 +136,16 @@
       <option value="SEK" data-country="Sweden">Sweden - SEK</option>
       <option value="NOK" data-country="Norway">Norway - NOK</option>
       <option value="TRY" data-country="Turkey">Turkey - TRY</option>
-    </select>
+      <option value="AED" data-country="United Arab Emirates">United Arab Emirates - AED</option>
+      <option value="SAR" data-country="Saudi Arabia">Saudi Arabia - SAR</option>
+      <option value="MYR" data-country="Malaysia">Malaysia - MYR</option>
+      <option value="IDR" data-country="Indonesia">Indonesia - IDR</option>
+      <option value="PKR" data-country="Pakistan">Pakistan - PKR</option>
+  </select>
 
-    <label for="toCurrency">To:</label>
-    <select id="toCurrency">
-      <option value="USD" data-country="United States">United States - USD</option>
+  <label>To:</label>
+  <select id="toCurrency">
+    <option value="USD" data-country="United States">United States - USD</option>
       <option value="EUR" data-country="Eurozone">Eurozone - EUR</option>
       <option value="INR" data-country="India">India - INR</option>
       <option value="GBP" data-country="United Kingdom">United Kingdom - GBP</option>
@@ -138,33 +165,30 @@
       <option value="SEK" data-country="Sweden">Sweden - SEK</option>
       <option value="NOK" data-country="Norway">Norway - NOK</option>
       <option value="TRY" data-country="Turkey">Turkey - TRY</option>
-    </select>
+      <option value="AED" data-country="United Arab Emirates">United Arab Emirates - AED</option>
+      <option value="SAR" data-country="Saudi Arabia">Saudi Arabia - SAR</option>
+      <option value="MYR" data-country="Malaysia">Malaysia - MYR</option>
+      <option value="IDR" data-country="Indonesia">Indonesia - IDR</option>
+      <option value="PKR" data-country="Pakistan">Pakistan - PKR</option>
+  </select>
 
-    <button onclick="convertCurrency()">Convert</button>
-    <p id="result"></p>
-  </div>
+  <button onclick="convertCurrency()">Convert</button>
 
-  <a href="{{ url_for('dashboard') }}" 
-   style="
-     display: inline-block;
-     margin-top: 20px;
-     padding: 6px 12px;
-     background: #3498db;
-     color: white;
-     border-radius: 4px;
-     text-decoration: none;
-     font-weight: 600;
-     font-size: 0.9rem;
-     box-shadow: none;
-     cursor: pointer;
-   ">
- ← Back to Dashboard
-</a>
+  <div id="result"></div>
+  <div id="steps"></div>
+  <canvas id="currencyChart" width="300" height="200"></canvas>
 
-  <script>
-    // Static exchange rates relative to USD (approximate)
-    const rates = {
-      USD: 1,
+  <div style="text-align:center;">
+  <a href="{{ url_for('dashboard') }}" class="back-btn">
+    ← Back to Dashboard
+  </a>
+</div>
+
+</div>
+
+<script>
+const rates = {
+  USD: 1,
       EUR: 0.9,
       INR: 82,
       GBP: 0.78,
@@ -183,31 +207,50 @@
       HKD: 7.8,
       SEK: 10.5,
       NOK: 10.9,
-      TRY: 26
-    };
+      TRY: 26,
+      AED: 3.67,
+      SAR: 3.75,
+      MYR: 4.6,
+      IDR: 15500,
+      PKR: 278
+};
 
-    function convertCurrency() {
-      const amount = parseFloat(document.getElementById("amount").value);
-      const fromSelect = document.getElementById("fromCurrency");
-      const toSelect = document.getElementById("toCurrency");
-      const from = fromSelect.value;
-      const to = toSelect.value;
+function convertCurrency() {
+  const amount = parseFloat(document.getElementById("amount").value);
+  const fromSelect = document.getElementById("fromCurrency");
+  const toSelect = document.getElementById("toCurrency");
 
-      if (isNaN(amount) || amount <= 0) {
-        document.getElementById("result").innerText = "Enter a valid positive amount.";
-        return;
-      }
+  const from = fromSelect.value;
+  const to = toSelect.value;
 
-      const amountInUSD = amount / rates[from];
-      const converted = amountInUSD * rates[to];
+  if (isNaN(amount) || amount <= 0) {
+    document.getElementById("result").innerText = "Enter a valid amount";
+    return;
+  }
 
-      // Get country names from selected options' data attributes
-      const fromCountry = fromSelect.options[fromSelect.selectedIndex].getAttribute("data-country");
-      const toCountry = toSelect.options[toSelect.selectedIndex].getAttribute("data-country");
+  const amountUSD = amount / rates[from];
+  const converted = amountUSD * rates[to];
 
-      document.getElementById("result").innerText = 
-        `${amount} ${from} (${fromCountry}) = ${converted.toFixed(2)} ${to} (${toCountry})`;
-    }
-  </script>
+  document.getElementById("result").innerText =
+    `${amount} ${from} = ${converted.toFixed(2)} ${to}`;
+
+  document.getElementById("steps").innerHTML = `
+    <strong>Steps:</strong><br>
+    1. Convert ${from} to USD<br>
+    2. Convert USD to ${to}<br>
+    3. Final Value = ${converted.toFixed(2)} ${to}
+  `;
+
+  const ctx = document.getElementById("currencyChart").getContext("2d");
+  ctx.clearRect(0, 0, 300, 200);
+
+  ctx.fillStyle = "#3498db";
+  ctx.fillRect(60, 150 - amount, 40, amount);
+
+  ctx.fillStyle = "#2ecc71";
+  ctx.fillRect(160, 150 - converted, 40, converted);
+}
+</script>
+
 </body>
 </html>

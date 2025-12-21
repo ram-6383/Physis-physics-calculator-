@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Relativistic & Quantum Thermodynamics</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: auto;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 { text-align: center; color: #003366; }
+
+    label { font-weight: 600; margin-top: 10px; display: block; }
+
+    select, input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 18px;
+      background: #007bff;
+      color: white;
+      font-size: 1rem;
+      border: none;
+    }
+
+    .section { display: none; }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .visual { margin-top: 25px; }
+    #rqPlot { width: 100%; height: 300px; }
+
+    a.back-link {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      text-decoration: none;
+      max-width: 260px;
+    }
+  </style>
+
+  <script>
+    function toggleLaw() {
+      const law = document.getElementById("law").value;
+      document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+      if (law) document.getElementById(law).style.display = "block";
+    }
+  </script>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Relativistic & Quantum Thermodynamics</h2>
+
+  <form method="POST">
+    <label>Select Concept:</label>
+    <select name="law" id="law" onchange="toggleLaw()" required>
+      <option value="">-- Select --</option>
+      <option value="relativistic_first">Relativistic First Law</option>
+      <option value="black_hole">Black Hole Entropy</option>
+      <option value="quantum_master">Quantum Master Equation</option>
+    </select>
+
+    <!-- Relativistic -->
+    <div id="relativistic_first" class="section">
+      <label>dΘ (Energy 4-vector component):</label>
+      <input type="number" name="dTheta" step="any">
+      <label>Pressure (P):</label>
+      <input type="number" name="P" step="any">
+      <label>dV (4-volume change):</label>
+      <input type="number" name="dV" step="any">
+    </div>
+
+    <!-- Black Hole -->
+    <div id="black_hole" class="section">
+      <label>Event Horizon Area (A) [m²]:</label>
+      <input type="number" name="A" step="any">
+    </div>
+
+    <!-- Quantum -->
+    <div id="quantum_master" class="section">
+      <label>Relaxation Rate (γ):</label>
+      <input type="number" name="gamma" step="any">
+      <label>Current State (ρ):</label>
+      <input type="number" name="rho" step="any">
+      <label>Equilibrium State (ρₑq):</label>
+      <input type="number" name="rho_eq" step="any">
+    </div>
+
+    <button type="submit">Compute</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+      <div class="result">
+        <strong>{{ result.law }}</strong><br><br>
+
+        {% if result.dXi is defined %}
+          dξ = {{ result.dXi }}
+        {% endif %}
+
+        {% if result.S is defined %}
+          Entropy S = {{ result.S }} J/K
+        {% endif %}
+
+        {% if result.drho_dt is defined %}
+          dρ/dt = {{ result.drho_dt }}
+        {% endif %}
+      </div>
+
+      <div class="visual">
+        <div id="rqPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'rqPlot',
+          [{
+            x: ['Result'],
+            y: [
+              {% if result.dXi is defined %} {{ result.dXi }}
+              {% elif result.S is defined %} {{ result.S }}
+              {% else %} {{ result.drho_dt }}
+              {% endif %}
+            ],
+            type: 'bar',
+            marker: { color: '#3498db' }
+          }],
+          { title: '{{ result.law }} Output' },
+          { responsive: true }
+        );
+      </script>
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

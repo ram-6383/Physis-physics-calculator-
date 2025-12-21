@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Non-Ideal & Mixture Calculations</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: auto;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 { text-align: center; color: #003366; }
+
+    label { font-weight: 600; margin-top: 10px; display: block; }
+
+    select, input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 18px;
+      background: #007bff;
+      color: white;
+      font-size: 1rem;
+      border: none;
+    }
+
+    .section { display: none; }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .visual { margin-top: 25px; }
+    #mixPlot { width: 100%; height: 300px; }
+
+    a.back-link {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      text-decoration: none;
+      max-width: 260px;
+    }
+  </style>
+
+  <script>
+    function toggleLaw() {
+      const law = document.getElementById("law").value;
+      document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+      if (law) document.getElementById(law).style.display = "block";
+    }
+  </script>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Non-Ideal & Mixture Calculations</h2>
+
+  <form method="POST">
+    <label>Select Calculation:</label>
+    <select name="law" id="law" onchange="toggleLaw()" required>
+      <option value="">-- Select --</option>
+      <option value="residual">Residual Property</option>
+      <option value="activity_coeff">Activity Coefficient</option>
+      <option value="poynting">Poynting Correction</option>
+      <option value="dalton">Dalton’s Law</option>
+    </select>
+
+    <!-- Residual -->
+    <div id="residual" class="section">
+      <label>G_real:</label>
+      <input type="number" name="G_real" step="any">
+      <label>G_ideal:</label>
+      <input type="number" name="G_ideal" step="any">
+    </div>
+
+    <!-- Activity -->
+    <div id="activity_coeff" class="section">
+      <label>Activity Coefficient (γ):</label>
+      <input type="number" name="gamma" step="any">
+      <label>Mole Fraction (x):</label>
+      <input type="number" name="x" step="any">
+    </div>
+
+    <!-- Poynting -->
+    <div id="poynting" class="section">
+      <label>Molar Volume (V):</label>
+      <input type="number" name="V" step="any">
+      <label>Pressure P:</label>
+      <input type="number" name="P" step="any">
+      <label>Reference Pressure P₀:</label>
+      <input type="number" name="P0" step="any">
+      <label>Temperature (T):</label>
+      <input type="number" name="T" step="any">
+    </div>
+
+    <!-- Dalton -->
+    <div id="dalton" class="section">
+      <label>Partial Pressure P₁:</label>
+      <input type="number" name="P1" step="any">
+      <label>Partial Pressure P₂:</label>
+      <input type="number" name="P2" step="any">
+      <label>Partial Pressure P₃:</label>
+      <input type="number" name="P3" step="any">
+    </div>
+
+    <button type="submit">Calculate</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+      <div class="result">
+        <strong>{{ result.law }}</strong><br><br>
+
+        {% if result.GR is defined %}
+          Residual Property Gᴿ = {{ result.GR }}
+        {% endif %}
+
+        {% if result.a is defined %}
+          Activity (a) = {{ result.a }}
+        {% endif %}
+
+        {% if result.correction is defined %}
+          Poynting Correction Term = {{ result.correction }}
+        {% endif %}
+
+        {% if result.P_total is defined %}
+          Total Pressure = {{ result.P_total }}
+        {% endif %}
+      </div>
+
+      <div class="visual">
+        <div id="mixPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'mixPlot',
+          [{
+            x: ['Result'],
+            y: [
+              {% if result.GR is defined %} {{ result.GR }}
+              {% elif result.a is defined %} {{ result.a }}
+              {% elif result.correction is defined %} {{ result.correction }}
+              {% else %} {{ result.P_total }}
+              {% endif %}
+            ],
+            type: 'bar',
+            marker: { color: '#3498db' }
+          }],
+          { title: '{{ result.law }} Output' },
+          { responsive: true }
+        );
+      </script>
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

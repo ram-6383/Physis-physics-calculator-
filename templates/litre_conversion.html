@@ -2,20 +2,28 @@
 <html>
 <head>
   <title>Litre Conversion</title>
+   <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * { box-sizing: border-box; }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f2f6fa;
-      padding: 40px;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
 
     .container {
       max-width: 420px;
-      margin: auto;
       background-color: #ffffff;
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
     }
 
     h2 {
@@ -25,13 +33,13 @@
     }
 
     label {
-      font-weight: 500;
-      margin-top: 10px;
+      font-weight: 600;
+      margin-top: 12px;
       display: block;
       color: #333;
     }
 
-    input[type="number"], select {
+    input, select {
       width: 100%;
       padding: 10px;
       margin-top: 6px;
@@ -42,7 +50,7 @@
 
     button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 20px;
       background-color: #007bff;
       color: white;
@@ -50,69 +58,131 @@
       border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
+      font-weight: bold;
     }
 
-    button:hover {
-      background-color: #0056b3;
-    }
+    button:hover { background-color: #0056b3; }
 
     #litreResult {
       text-align: center;
       margin-top: 20px;
-      font-size: 16px;
-      color: #333;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    #steps {
+      margin-top: 15px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      background: #eef4ff;
+      padding: 12px;
+      border-radius: 6px;
+    }
+
+    canvas {
+      margin-top: 20px;
+    }
+     @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Litre Conversion</h2>
-    <label>Enter Value:
-      <input type="number" id="litreValue" step="any" placeholder="e.g., 1.5">
-    </label>
-    <label>From:
-      <select id="fromLitre">
-        <option value="litre">Litre</option>
-        <option value="ml">Millilitre</option>
-        <option value="gallon">Gallon (US)</option>
-      </select>
-    </label>
-    <label>To:
-      <select id="toLitre">
-        <option value="litre">Litre</option>
-        <option value="ml">Millilitre</option>
-        <option value="gallon">Gallon (US)</option>
-      </select>
-    </label>
-    <button onclick="convertLitre()">Convert</button>
-    <p id="litreResult"></p>
-  </div>
-  <a href="{{ url_for('dashboard') }}" 
-  style="display:inline-block; margin-top:30px; padding:10px 20px; background:#3498db; color:white; border-radius:5px; text-decoration:none; font-weight:bold;">
+
+<div class="container">
+  <h2>Litre / Volume Conversion</h2>
+
+  <label>Enter Value:
+    <input type="number" id="litreValue" step="any" placeholder="e.g., 1.5">
+  </label>
+
+  <label>From:
+    <select id="fromLitre">
+      <option value="litre">Litre (L)</option>
+      <option value="ml">Millilitre (mL)</option>
+      <option value="gallon">Gallon (US)</option>
+      <option value="m3">Cubic Meter (m³)</option>
+    </select>
+  </label>
+
+  <label>To:
+    <select id="toLitre">
+      <option value="litre">Litre (L)</option>
+      <option value="ml">Millilitre (mL)</option>
+      <option value="gallon">Gallon (US)</option>
+      <option value="m3">Cubic Meter (m³)</option>
+    </select>
+  </label>
+
+  <button onclick="convertLitre()">Convert</button>
+
+  <p id="litreResult"></p>
+  <div id="steps"></div>
+  <canvas id="volumeChart" width="300" height="200"></canvas>
+</div>
+
+<a href="{{ url_for('dashboard') }}"
+ style="margin-top:30px; padding:10px 20px; background:#3498db;
+ color:white; border-radius:5px; text-decoration:none; font-weight:bold;">
  ← Back to Dashboard
 </a>
 
-  <script>
-    function convertLitre() {
-      const value = parseFloat(document.getElementById("litreValue").value);
-      const from = document.getElementById("fromLitre").value;
-      const to = document.getElementById("toLitre").value;
+<script>
+function convertLitre() {
+  const value = parseFloat(document.getElementById("litreValue").value);
+  const from = document.getElementById("fromLitre").value;
+  const to = document.getElementById("toLitre").value;
 
-      if (isNaN(value) || value <= 0) {
-        document.getElementById("litreResult").innerText = "Please enter a valid positive value.";
-        return;
-      }
+  if (isNaN(value) || value <= 0) {
+    document.getElementById("litreResult").innerText =
+      "Please enter a valid positive value.";
+    return;
+  }
 
-      const factors = {
-        litre: 1,
-        ml: 0.001,
-        gallon: 3.785
-      };
+  // Base unit = litre
+  const factors = {
+    litre: 1,
+    ml: 0.001,
+    gallon: 3.785,
+    m3: 1000
+  };
 
-      const result = value * factors[from] / factors[to];
-      document.getElementById("litreResult").innerText = `Result: ${result.toFixed(4)} ${to}`;
-    }
-    
-  </script>
+  const baseLitres = value * factors[from];
+  const result = baseLitres / factors[to];
+
+  document.getElementById("litreResult").innerText =
+    `Result: ${result.toFixed(4)} ${to}`;
+
+  document.getElementById("steps").innerHTML = `
+    <strong>Step-by-step:</strong><br>
+    1. Given Value = ${value} ${from}<br>
+    2. Converted to litres = ${baseLitres.toFixed(4)} L<br>
+    3. Converted to ${to} = ${result.toFixed(4)}
+  `;
+
+  // Visual representation
+  const canvas = document.getElementById("volumeChart");
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const maxVal = Math.max(value, result);
+  const scale = 120 / maxVal;
+
+  ctx.fillStyle = "#3498db";
+  ctx.fillRect(60, 150 - value * scale, 50, value * scale);
+  ctx.fillText("Input", 65, 170);
+
+  ctx.fillStyle = "#2ecc71";
+  ctx.fillRect(160, 150 - result * scale, 50, result * scale);
+  ctx.fillText("Output", 155, 170);
+}
+</script>
+
 </body>
 </html>

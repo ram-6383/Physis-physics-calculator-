@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Doppler Effect Simulation</title>
+
+  <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef3f8;
+      padding: 30px;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background-color: #fff;
+      padding: 30px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    h2, h4 {
+      text-align: center;
+      color: #003366;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    input, select {
+      padding: 10px;
+      width: 100%;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .steps {
+      margin-top: 25px;
+      background: #f9fbff;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 5px solid #007bff;
+      line-height: 1.7;
+      font-size: 15px;
+      width: 100%;
+    }
+
+    #plot {
+      margin-top: 25px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* 📱 MOBILE FIX */
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+
+      .container {
+        padding: 15px;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      h4 {
+        font-size: 1.1rem;
+      }
+
+      .steps {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Doppler Effect Calculator</h2>
+
+    <form method="POST">
+      <label>Source Frequency (Hz):</label>
+      <input type="number" name="source_freq" required step="any">
+
+      <label>Observer Velocity (m/s):</label>
+      <input type="number" name="observer_velocity" required step="any">
+
+      <label>Source Velocity (m/s):</label>
+      <input type="number" name="source_velocity" required step="any">
+
+      <label>Direction of Motion:</label>
+      <select name="direction">
+        <option value="approaching">Source Approaching Observer</option>
+        <option value="receding">Source Receding from Observer</option>
+      </select>
+
+      <button type="submit">Calculate Observed Frequency</button>
+    </form>
+
+    {% if result %}
+      {% if result.error %}
+        <p style="color:red;">{{ result.error }}</p>
+      {% else %}
+        <h4>Observed Frequency: {{ result.observed_freq | round(2) }} Hz</h4>
+
+        <div class="steps">
+          <strong>Step-by-Step Explanation:</strong><br><br>
+
+          1. Source Frequency (fₛ) = {{ result.source_freq }} Hz<br>
+          2. Observer Velocity (vₒ) = {{ result.observer_velocity }} m/s<br>
+          3. Source Velocity (vₛ) = {{ result.source_velocity }} m/s<br>
+          4. Speed of Sound (v) = 340 m/s<br><br>
+
+          <strong>Formula Used:</strong><br>
+          f′ = fₛ × (v ± vₒ) / (v ∓ vₛ)<br><br>
+
+          <strong>Result Interpretation:</strong><br>
+          Observed frequency =
+          <strong>{{ result.observed_freq | round(2) }} Hz</strong>
+        </div>
+
+        <div id="plot"></div>
+        <script>
+          const source = parseFloat("{{ result.source_freq }}");
+          const observed = parseFloat("{{ result.observed_freq }}");
+
+          const data = [{
+            x: ["Source Frequency", "Observed Frequency"],
+            y: [source, observed],
+            type: 'bar',
+            marker: { color: ['#f39c12', '#27ae60'] }
+          }];
+
+          const layout = {
+            title: 'Frequency Comparison',
+            yaxis: { title: 'Frequency (Hz)' },
+            autosize: true
+          };
+
+          Plotly.newPlot('plot', data, layout, { responsive: true });
+        </script>
+      {% endif %}
+    {% endif %}
+
+    <a href="{{ url_for('dashboard') }}"
+       style="
+         display:block;
+         margin-top:30px;
+         padding:10px;
+         background:#217dbb;
+         color:white;
+         border-radius:5px;
+         text-decoration:none;
+         text-align:center;
+         width:100%;
+       ">
+       ← Back to Dashboard
+    </a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Molecular & Statistical Simulation Methods</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: auto;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 { text-align: center; color: #003366; }
+
+    label { font-weight: 600; margin-top: 10px; display: block; }
+
+    select, input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 18px;
+      background: #007bff;
+      color: white;
+      font-size: 1rem;
+      border: none;
+    }
+
+    .section { display: none; }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .visual { margin-top: 25px; }
+    #simPlot { width: 100%; height: 300px; }
+
+    a.back-link {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      text-decoration: none;
+      max-width: 260px;
+    }
+  </style>
+
+  <script>
+    function toggleMethod() {
+      const m = document.getElementById("method").value;
+      document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+      if (m) document.getElementById(m).style.display = "block";
+    }
+  </script>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Molecular & Statistical Simulation Methods</h2>
+
+  <form method="POST">
+    <label>Select Method:</label>
+    <select name="method" id="method" onchange="toggleMethod()" required>
+      <option value="">-- Select --</option>
+      <option value="thermo_integration">Thermodynamic Integration</option>
+      <option value="widom">Widom Particle Insertion</option>
+      <option value="langevin">Langevin Dynamics</option>
+    </select>
+
+    <!-- Thermodynamic Integration -->
+    <div id="thermo_integration" class="section">
+      <label>⟨∂U/∂λ⟩ (Average Energy Gradient):</label>
+      <input type="number" name="avg_dU" step="any">
+
+      <label>Δλ (Path Length):</label>
+      <input type="number" name="delta_lambda" step="any">
+    </div>
+
+    <!-- Widom -->
+    <div id="widom" class="section">
+      <label>Energy Change ΔU:</label>
+      <input type="number" name="deltaU" step="any">
+
+      <label>Temperature (T):</label>
+      <input type="number" name="T" step="any">
+    </div>
+
+    <!-- Langevin -->
+    <div id="langevin" class="section">
+      <label>Friction Coefficient (γ):</label>
+      <input type="number" name="gamma" step="any">
+
+      <label>Particle Velocity (v):</label>
+      <input type="number" name="v" step="any">
+    </div>
+
+    <button type="submit">Calculate</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+      <div class="result">
+        <strong>{{ result.method }}</strong><br><br>
+
+        {% if result.deltaF is defined %}
+          ΔF = {{ result.deltaF }}<br>
+        {% endif %}
+
+        {% if result.mu is defined %}
+          Chemical Potential (μ) = {{ result.mu }}<br>
+        {% endif %}
+
+        {% if result.force is defined %}
+          Friction Force = {{ result.force }}<br>
+        {% endif %}
+
+        {{ result.explain }}
+      </div>
+
+      <div class="visual">
+        <div id="simPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'simPlot',
+          [{
+            x: ['Result'],
+            y: [
+              {% if result.deltaF is defined %} {{ result.deltaF }}
+              {% elif result.mu is defined %} {{ result.mu }}
+              {% else %} {{ result.force }}
+              {% endif %}
+            ],
+            type: 'bar',
+            marker: { color: '#3498db' }
+          }],
+          { title: '{{ result.method }} Output' },
+          { responsive: true }
+        );
+      </script>
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

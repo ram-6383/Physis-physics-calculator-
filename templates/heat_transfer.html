@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Heat Transfer Simulation</title>
+
+  <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial;
+      background: #f0f4f8;
+      padding: 40px;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      width: 100%;
+      font-weight: bold;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      margin-top: 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .steps {
+      background: #eef5ff;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      width: 100%;
+    }
+
+    #plot {
+      margin-top: 25px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* 📱 MOBILE FIX */
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+
+      .container {
+        padding: 15px;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      .steps {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Heat Transfer Simulation</h2>
+
+  <form method="POST">
+    <label>Mass (kg):</label>
+    <input type="number" name="mass" step="any" required>
+
+    <label>Specific Heat Capacity (J/kg°C):</label>
+    <input type="number" name="specific_heat" step="any" required>
+
+    <label>Initial Temperature (°C):</label>
+    <input type="number" name="initial_temp" step="any" required>
+
+    <label>Final Temperature (°C):</label>
+    <input type="number" name="final_temp" step="any" required>
+
+    <button type="submit">Simulate</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+
+      <p><strong>Heat Transferred (Q):</strong> {{ result.heat | round(2) }} J</p>
+
+      <div class="steps">
+        <strong>Step-by-Step Explanation:</strong><br>
+        1. Given mass (m) = {{ result.mass }} kg<br>
+        2. Specific heat capacity (c) = {{ result.c }} J/kg°C<br>
+        3. Initial temperature (T₁) = {{ result.t1 }} °C<br>
+        4. Final temperature (T₂) = {{ result.t2 }} °C<br>
+        5. Temperature change ΔT = T₂ − T₁ = {{ result.deltaT }} °C<br>
+        6. Formula used: Q = m × c × ΔT<br>
+        7. Heat transferred Q = {{ result.heat | round(2) }} J
+      </div>
+
+      <div id="plot"></div>
+      <script>
+        var x = {{ result.time | tojson }};
+        var y = {{ result.temp | tojson }};
+
+        var trace = {
+          x: x,
+          y: y,
+          type: 'scatter',
+          mode: 'lines+markers',
+          marker: { color: 'red' },
+          line: { shape: 'spline' }
+        };
+
+        var layout = {
+          title: 'Temperature vs Time',
+          xaxis: { title: 'Time (s)' },
+          yaxis: { title: 'Temperature (°C)' },
+          autosize: true
+        };
+
+        Plotly.newPlot('plot', [trace], layout, { responsive: true });
+      </script>
+
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('dashboard') }}"
+     style="
+       display:block;
+       margin-top:30px;
+       padding:10px;
+       background:#217dbb;
+       color:white;
+       border-radius:5px;
+       text-decoration:none;
+       text-align:center;
+       width:100%;
+     ">
+     ← Back to Dashboard
+  </a>
+
+</div>
+
+</body>
+</html>

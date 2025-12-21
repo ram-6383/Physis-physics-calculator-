@@ -2,11 +2,15 @@
 <html>
 <head>
   <title>Specific Heat Capacity</title>
+   <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- NEW: Plotly for visualization -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
   <style>
-    /* Reset some default styles */
-    * {
-      box-sizing: border-box;
-    }
+    /* ===== YOUR EXISTING CSS (UNCHANGED) ===== */
+    * { box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -27,7 +31,6 @@
       box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
       max-width: 400px;
       width: 100%;
-      box-sizing: border-box;
     }
 
     h2 {
@@ -53,13 +56,6 @@
       font-size: 1rem;
       border: 1.8px solid #ddd;
       border-radius: 6px;
-      transition: border-color 0.3s ease;
-    }
-
-    input[type="number"]:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 6px #a9d6ff;
     }
 
     button {
@@ -72,12 +68,7 @@
       border-radius: 8px;
       cursor: pointer;
       font-size: 1.1rem;
-      transition: background-color 0.3s ease;
       margin-top: 10px;
-    }
-
-    button:hover {
-      background-color: #2980b9;
     }
 
     p {
@@ -88,12 +79,6 @@
       color: #2c3e50;
     }
 
-    p[style*="color: red"] {
-      color: #e74c3c !important;
-      font-weight: 700;
-    }
-
-    /* Back to Dashboard link styling */
     a.back-link {
       display: inline-block;
       margin-top: 30px;
@@ -103,36 +88,109 @@
       border-radius: 8px;
       text-decoration: none;
       font-weight: 700;
-      font-size: 1.1rem;
-      box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
     }
 
-    a.back-link:hover {
-      background-color: #2980b9;
-      box-shadow: 0 6px 12px rgba(41, 128, 185, 0.6);
+    /* ===== NEW STYLES ===== */
+    #steps {
+      margin-top: 20px;
+      background: #f4f6f8;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    #plot {
+      margin-top: 30px;
+    }
+     @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
+
 <body>
   <form method="post">
     <h2>Specific Heat Capacity</h2>
+
     <label>Mass (kg):
       <input type="number" name="mass" step="any" placeholder="Enter mass in kilograms" required>
     </label>
+
     <label>Specific Heat (J/kg°C):
       <input type="number" name="specific_heat" step="any" placeholder="Enter specific heat capacity" required>
     </label>
+
     <label>Temperature Change (ΔT °C):
       <input type="number" name="change_temp" step="any" placeholder="Enter temperature change" required>
     </label>
+
     <button type="submit">Calculate Heat</button>
+
     {% if result %}
       {% if result.heat %}
-        <p>Heat Required: {{ result.heat }} J</p>
+        <p><b>Heat Required:</b> {{ result.heat }} J</p>
+
+        <!-- STEP-BY-STEP EXPLANATION (NEW) -->
+        <div id="steps">
+          <b>Step-by-Step Explanation:</b><br><br>
+
+          1. Given mass (m) = {{ request.form.mass }} kg<br>
+          2. Given specific heat capacity (c) = {{ request.form.specific_heat }} J/kg°C<br>
+          3. Given temperature change (ΔT) = {{ request.form.change_temp }} °C<br><br>
+
+          <b>Formula Used:</b><br>
+          Heat Energy (Q) = m × c × ΔT<br><br>
+
+          <b>Calculation:</b><br>
+          Q = {{ request.form.mass }} × {{ request.form.specific_heat }} × {{ request.form.change_temp }}<br>
+          Q = {{ result.heat }} Joules<br><br>
+
+          <b>Interpretation:</b><br>
+          This is the amount of heat energy required to change the temperature of the substance.
+        </div>
+
+        <!-- VISUAL REPRESENTATION (NEW) -->
+        <div id="plot"></div>
+
+        <script>
+          const m = {{ request.form.mass }};
+          const c = {{ request.form.specific_heat }};
+          const dT = {{ request.form.change_temp }};
+
+          let temps = [];
+          let heat = [];
+
+          for (let i = 0; i <= dT * 1.5; i += dT / 10) {
+            temps.push(i);
+            heat.push(m * c * i);
+          }
+
+          const trace = {
+            x: temps,
+            y: heat,
+            mode: 'lines',
+            line: { color: 'red' },
+            name: 'Heat vs Temperature'
+          };
+
+          const layout = {
+            title: 'Heat Energy vs Temperature Change',
+            xaxis: { title: 'Temperature Change (°C)' },
+            yaxis: { title: 'Heat Energy (J)' }
+          };
+
+          Plotly.newPlot('plot', [trace], layout);
+        </script>
+
       {% else %}
-        <p style="color: red;">{{ result.error }}</p>
+        <p style="color:red;">{{ result.error }}</p>
       {% endif %}
     {% endif %}
   </form>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Zeroth Law of Thermodynamics</title>
+
+  <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      margin: auto;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+
+    .formula {
+      background: #f0f4f8;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 25px;
+    }
+
+    .visual h4 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #003366;
+      font-size: 1.05rem;
+    }
+
+    #zerothPlot {
+      width: 100%;
+      min-height: 260px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 22px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      max-width: 260px;
+    }
+
+    @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Zeroth Law of Thermodynamics</h2>
+
+  <div class="formula">
+    If two systems are in thermal equilibrium with a third system, <br>
+    then they are in thermal equilibrium with each other.
+  </div>
+
+  <form method="POST">
+    <label>Temperature of System A (K):</label>
+    <input type="number" name="T1" step="any" required>
+
+    <label>Temperature of System B (K):</label>
+    <input type="number" name="T2" step="any" required>
+
+    <button type="submit">Check Thermal Equilibrium</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+
+      <!-- STEP-BY-STEP EXPLANATION -->
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        1️⃣ Temperature of System A = {{ result.T1 }} K<br>
+        2️⃣ Temperature of System B = {{ result.T2 }} K<br><br>
+
+        3️⃣ According to Zeroth Law, systems are in equilibrium if temperatures are equal.<br><br>
+
+        {% if result.equilibrium == "YES" %}
+          ✅ Since both temperatures are equal, the systems are in thermal equilibrium.
+        {% else %}
+          ❌ Since temperatures are different, the systems are NOT in thermal equilibrium.
+        {% endif %}
+      </div>
+
+      <!-- VISUAL -->
+      <div class="visual">
+        <h4>Visual Representation</h4>
+        <div id="zerothPlot"></div>
+      </div>
+
+      <script>
+        const T1 = {{ result.T1 }};
+        const T2 = {{ result.T2 }};
+
+        Plotly.newPlot(
+          'zerothPlot',
+          [{
+            x: ['System A (K)', 'System B (K)'],
+            y: [T1, T2],
+            type: 'bar',
+            marker: {
+              color: T1 === T2 ? ['#2ecc71', '#2ecc71'] : ['#e74c3c', '#3498db']
+            }
+          }],
+          {
+            margin: { t: 30, l: 40, r: 20, b: 40 },
+            yaxis: { title: 'Temperature (K)' }
+          },
+          { responsive: true }
+        );
+      </script>
+
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

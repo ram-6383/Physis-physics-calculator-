@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Phase Transition</title>
+
+  <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      margin: auto;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+
+    .formula {
+      background: #f0f4f8;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 9px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.95rem;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 25px;
+    }
+
+    .visual h4 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #003366;
+      font-size: 1.05rem;
+    }
+
+    #phasePlot {
+      width: 100%;
+      min-height: 260px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 22px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      max-width: 260px;
+    }
+
+    @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Phase Transition</h2>
+
+  <div class="formula">
+    Q = mL &nbsp;&nbsp;|&nbsp;&nbsp;
+    ln(P₂ / P₁) = (ΔH<sub>vap</sub>/R) (1/T₁ − 1/T₂)
+  </div>
+
+  <form method="POST">
+    <label>Mass (kg):</label>
+    <input type="number" name="mass" step="any" required>
+
+    <label>Latent Heat (J/kg):</label>
+    <input type="number" name="latent_heat" step="any" required>
+
+    <label>Initial Temperature (T₁) in K:</label>
+    <input type="number" name="T1" step="any" required>
+
+    <label>Final Temperature (T₂) in K:</label>
+    <input type="number" name="T2" step="any" required>
+
+    <label>Enthalpy of Vaporization (ΔH<sub>vap</sub>) in J/mol:</label>
+    <input type="number" name="H_vap" step="any" required>
+
+    <button type="submit">Calculate Phase Transition</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+
+      <!-- STEP-BY-STEP EXPLANATION -->
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        1️⃣ Heat required for phase change:<br>
+        &nbsp;&nbsp;Q = m × L = {{ result.mass }} × {{ result.latent_heat }}<br>
+        &nbsp;&nbsp;<strong>Q = {{ result.Q }} J</strong><br><br>
+
+        2️⃣ Clausius–Clapeyron equation:<br>
+        &nbsp;&nbsp;ln(P₂/P₁) = (ΔH<sub>vap</sub>/R)(1/T₁ − 1/T₂)<br><br>
+
+        3️⃣ Substitution:<br>
+        &nbsp;&nbsp;ln(P₂/P₁) = ({{ result.H_vap }}/8.314)
+        (1/{{ result.T1 }} − 1/{{ result.T2 }})<br><br>
+
+        <strong>ln(P₂ / P₁) = {{ result.lnP_ratio }}</strong>
+      </div>
+
+      <!-- VISUAL -->
+      <div class="visual">
+        <h4>Visual Representation</h4>
+        <div id="phasePlot"></div>
+      </div>
+
+      <script>
+        const Q = {{ result.Q }};
+        const lnP = {{ result.lnP_ratio }};
+
+        Plotly.newPlot(
+          'phasePlot',
+          [{
+            x: ['Latent Heat Q', 'ln(P₂/P₁)'],
+            y: [Q, lnP],
+            type: 'bar',
+            marker: {
+              color: ['#e67e22', '#3498db']
+            }
+          }],
+          {
+            margin: { t: 30, l: 40, r: 20, b: 40 }
+          },
+          { responsive: true }
+        );
+      </script>
+
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

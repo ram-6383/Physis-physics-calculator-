@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cp & Cv Calculator</title>
+
+  <!-- Mobile support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      margin: auto;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 12px;
+      font-size: 1.4rem;
+    }
+
+    .formula {
+      background: #eef3ff;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 24px;
+    }
+
+    .visual h4 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #003366;
+      font-size: 1.05rem;
+    }
+
+    #barPlot {
+      width: 100%;
+      min-height: 260px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 22px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      max-width: 260px;
+    }
+
+    @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Cp & Cv (Specific Heats)</h2>
+
+  <div class="formula">
+    Cp − Cv = R <br>
+    γ = Cp / Cv
+  </div>
+
+  <form method="POST">
+    <label>Gas Constant R (J/mol·K):</label>
+    <input type="number" name="R" step="any" placeholder="Example: 8.314" required>
+
+    <label>Gamma (γ = Cp / Cv):</label>
+    <input type="number" name="gamma" step="any" placeholder="Example: 1.4" required>
+
+    <button type="submit">Calculate Cp & Cv</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        1️⃣ Given R = {{ result.R }} J/mol·K<br>
+        2️⃣ Given γ = {{ result.gamma }}<br><br>
+
+        3️⃣ Cv = R / (γ − 1)<br>
+        &nbsp;&nbsp;Cv = {{ result.R }} / ({{ result.gamma }} − 1)<br>
+        &nbsp;&nbsp;Cv = {{ result.Cv }} J/mol·K<br><br>
+
+        4️⃣ Cp = γ × Cv<br>
+        &nbsp;&nbsp;Cp = {{ result.gamma }} × {{ result.Cv }}<br>
+        &nbsp;&nbsp;Cp = {{ result.Cp }} J/mol·K<br><br>
+
+        <strong>Final Values:</strong><br>
+        Cp = {{ result.Cp }} J/mol·K<br>
+        Cv = {{ result.Cv }} J/mol·K
+      </div>
+
+      <div class="visual">
+        <h4>Visual Comparison of Cp and Cv</h4>
+        <div id="barPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'barPlot',
+          [{
+            x: ['Cv', 'Cp'],
+            y: [{{ result.Cv }}, {{ result.Cp }}],
+            type: 'bar',
+            marker: { color: ['#3498db', '#e67e22'] }
+          }],
+          {
+            yaxis: { title: 'Specific Heat (J/mol·K)' },
+            margin: { t: 30, l: 50, r: 20, b: 40 }
+          },
+          { responsive: true }
+        );
+      </script>
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

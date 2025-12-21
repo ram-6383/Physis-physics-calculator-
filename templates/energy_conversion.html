@@ -2,6 +2,8 @@
 <html>
 <head>
   <title>Energy Conversion</title>
+   <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -10,7 +12,7 @@
     }
 
     .container {
-      max-width: 400px;
+      max-width: 420px;
       margin: auto;
       background: white;
       padding: 30px;
@@ -24,9 +26,11 @@
       margin-bottom: 20px;
     }
 
-    form label {
+    label {
       font-weight: 500;
       color: #333;
+      display: block;
+      margin-top: 10px;
     }
 
     input[type="number"] {
@@ -64,30 +68,104 @@
     .error {
       color: red;
     }
+
+    .steps {
+      margin-top: 20px;
+      background: #eef4ff;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    canvas {
+      display: block;
+      margin: 25px auto 0;
+    }
+
+    a.back-link {
+      display:inline-block;
+      margin-top:30px;
+      padding:10px 20px;
+      background:#3498db;
+      color:white;
+      border-radius:5px;
+      text-decoration:none;
+      font-weight:bold;
+    }
+     @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h2>Joules to Electron Volts</h2>
+
     <form method="post">
       <label>Energy (Joules):
-        <input type="number" name="joules" step="any" placeholder="Enter energy in joules">
+        <input type="number" name="joules" step="any" placeholder="Enter energy in joules" required>
       </label>
       <button type="submit">Convert</button>
     </form>
 
     {% if result %}
       {% if result.ev %}
-        <p>{{ result.ev }} eV</p>
+        <p><strong>{{ result.ev }} eV</strong></p>
+
+        <div class="steps">
+          <strong>Step-by-Step Explanation:</strong><br>
+          1. Given Energy = {{ request.form.joules }} Joules<br>
+          2. Conversion Constant: 1 eV = 1.602 × 10⁻¹⁹ Joules<br>
+          3. Formula Used:<br>
+             Energy (eV) = Energy (J) ÷ 1.602 × 10⁻¹⁹<br>
+          4. Final Converted Energy = {{ result.ev }} eV
+        </div>
+
+        <canvas id="energyChart" width="320" height="200"></canvas>
+<script>
+  const joules = {{ request.form.joules }};
+  const ev = {{ result.ev }};
+
+  const canvas = document.getElementById("energyChart");
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Normalize values for visualization
+  const joulesBar = 50;
+  const evBar = 120;
+
+  // Joules bar
+  ctx.fillStyle = "#3498db";
+  ctx.fillRect(70, 150 - joulesBar, 50, joulesBar);
+  ctx.fillText("Joules", 70, 170);
+
+  // eV bar
+  ctx.fillStyle = "#2ecc71";
+  ctx.fillRect(180, 150 - evBar, 50, evBar);
+  ctx.fillText("eV", 190, 170);
+
+  ctx.font = "12px Arial";
+  ctx.fillStyle = "#333";
+  ctx.fillText("Normalized comparison (relative scale)", 60, 20);
+</script>
+
+
       {% else %}
         <p class="error">{{ result.error }}</p>
       {% endif %}
     {% endif %}
-   
   </div>
-  <a href="{{ url_for('dashboard') }}" 
-  style="display:inline-block; margin-top:30px; padding:10px 20px; background:#3498db; color:white; border-radius:5px; text-decoration:none; font-weight:bold;">
- ← Back to Dashboard
-</a>
+
+  <a href="{{ url_for('dashboard') }}" class="back-link">
+    ← Back to Dashboard
+  </a>
 </body>
 </html>

@@ -2,6 +2,12 @@
 <html>
 <head>
   <title>Kinetic Energy Calculator</title>
+   <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly CDN (NEW for visualization) -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -60,39 +66,121 @@
       text-align: center;
       margin-top: 20px;
       font-size: 16px;
-      color: #333;
+      font-weight: bold;
+    }
+
+    /* NEW STYLES */
+    #steps {
+      margin-top: 20px;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    #plot {
+      margin-top: 30px;
+    }
+     @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h2>Kinetic Energy Calculator</h2>
+
     <label>Mass (kg):
       <input type="number" id="mass" step="any" placeholder="e.g., 10">
     </label>
+
     <label>Velocity (m/s):
       <input type="number" id="velocity" step="any" placeholder="e.g., 5">
     </label>
+
     <button onclick="calculateKE()">Calculate KE</button>
+
     <p id="result"></p>
+
+    <!-- STEP-BY-STEP EXPLANATION (NEW) -->
+    <div id="steps"></div>
+
+    <!-- VISUAL REPRESENTATION (NEW) -->
+    <div id="plot"></div>
   </div>
+
   <a href="{{ url_for('dashboard') }}" 
-  style="display:inline-block; margin-top:30px; padding:10px 20px; background:#3498db; color:white; border-radius:5px; text-decoration:none; font-weight:bold;">
- ← Back to Dashboard
-</a>
+     style="display:inline-block; margin-top:30px; padding:10px 20px;
+     background:#3498db; color:white; border-radius:5px; text-decoration:none; font-weight:bold;">
+    ← Back to Dashboard
+  </a>
 
   <script>
     function calculateKE() {
       const m = parseFloat(document.getElementById("mass").value);
       const v = parseFloat(document.getElementById("velocity").value);
+
       if (m <= 0 || v <= 0 || isNaN(m) || isNaN(v)) {
-        document.getElementById("result").innerText = "Please enter valid positive values.";
+        document.getElementById("result").innerText =
+          "Please enter valid positive values.";
         return;
       }
+
       const ke = 0.5 * m * v * v;
-      document.getElementById("result").innerText = `Kinetic Energy = ${ke.toFixed(2)} Joules`;
+
+      document.getElementById("result").innerText =
+        `Kinetic Energy = ${ke.toFixed(2)} Joules`;
+
+      /* STEP-BY-STEP EXPLANATION */
+      document.getElementById("steps").innerHTML = `
+        <b>Step-by-Step Explanation:</b><br>
+        1. Given mass (m) = ${m} kg<br>
+        2. Given velocity (v) = ${v} m/s<br><br>
+
+        <b>Formula Used:</b><br>
+        Kinetic Energy = ½ × m × v²<br><br>
+
+        <b>Calculation:</b><br>
+        KE = 0.5 × ${m} × (${v})²<br>
+        KE = ${ke.toFixed(2)} Joules<br><br>
+
+        <b>Interpretation:</b><br>
+        This value represents the energy possessed by the object due to its motion.
+      `;
+
+      /* VISUAL REPRESENTATION: KE vs Velocity */
+      let velocities = [];
+      let energies = [];
+
+      for (let i = 0; i <= v * 1.5; i += v / 10) {
+        velocities.push(i);
+        energies.push(0.5 * m * i * i);
+      }
+
+      const trace = {
+        x: velocities,
+        y: energies,
+        mode: 'lines',
+        line: { color: 'green' },
+        name: 'KE vs Velocity'
+      };
+
+      const layout = {
+        title: 'Kinetic Energy vs Velocity',
+        xaxis: { title: 'Velocity (m/s)' },
+        yaxis: { title: 'Kinetic Energy (J)' }
+      };
+
+      Plotly.newPlot('plot', [trace], layout);
     }
-    
   </script>
 </body>
 </html>

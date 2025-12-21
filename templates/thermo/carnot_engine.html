@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Carnot Engine Efficiency</title>
+
+  <!-- Mobile support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      margin: auto;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 10px;
+      font-size: 1.4rem;
+    }
+
+    .formula {
+      background: #eef3ff;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 24px;
+    }
+
+    .visual h4 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #003366;
+      font-size: 1.05rem;
+    }
+
+    #carnotPlot {
+      width: 100%;
+      min-height: 260px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 22px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      max-width: 260px;
+    }
+
+    @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Carnot Engine Efficiency</h2>
+
+  <div class="formula">
+    η = 1 − (T<sub>c</sub> / T<sub>h</sub>)
+  </div>
+
+  <form method="POST">
+    <label>Hot Reservoir Temperature (Tₕ) in Kelvin:</label>
+    <input type="number" name="Th" step="any" required>
+
+    <label>Cold Reservoir Temperature (T𝑐) in Kelvin:</label>
+    <input type="number" name="Tc" step="any" required>
+
+    <button type="submit">Calculate Carnot Efficiency</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        1️⃣ Given hot reservoir temperature, Tₕ = {{ result.Th }} K<br>
+        2️⃣ Given cold reservoir temperature, T𝑐 = {{ result.Tc }} K<br><br>
+
+        3️⃣ Carnot efficiency formula:<br>
+        &nbsp;&nbsp;η = 1 − (T𝑐 / Tₕ)<br><br>
+
+        4️⃣ Substituting values:<br>
+        &nbsp;&nbsp;η = 1 − ({{ result.Tc }} / {{ result.Th }})<br><br>
+
+        <strong>Maximum Possible Efficiency:</strong><br>
+        η = <strong>{{ result.efficiency }} %</strong>
+      </div>
+
+      <div class="visual">
+        <h4>Temperature vs Efficiency (Carnot Limit)</h4>
+        <div id="carnotPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'carnotPlot',
+          [{
+            x: ['Hot Reservoir (Tₕ)', 'Cold Reservoir (T𝑐)'],
+            y: [{{ result.Th }}, {{ result.Tc }}],
+            type: 'bar',
+            marker: { color: ['#e74c3c', '#3498db'] }
+          }],
+          {
+            yaxis: { title: 'Temperature (Kelvin)' },
+            margin: { t: 30, l: 50, r: 20, b: 60 }
+          },
+          { responsive: true }
+        );
+      </script>
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

@@ -2,11 +2,10 @@
 <html>
 <head>
   <title>Temperature Conversion</title>
+   <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Reset and box-sizing */
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,8 +13,8 @@
       color: #333;
       padding: 40px 20px;
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      flex-direction: column;
+      align-items: center;
       min-height: 100vh;
     }
 
@@ -24,7 +23,7 @@
       padding: 30px 40px;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
-      max-width: 400px;
+      max-width: 420px;
       width: 100%;
     }
 
@@ -40,24 +39,17 @@
       display: flex;
       flex-direction: column;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       font-size: 1rem;
       color: #34495e;
     }
 
-    input[type="number"], select {
+    input, select {
       margin-top: 8px;
       padding: 10px 12px;
       font-size: 1rem;
       border: 1.8px solid #ddd;
       border-radius: 6px;
-      transition: border-color 0.3s ease;
-    }
-
-    input[type="number"]:focus, select:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 6px #a9d6ff;
     }
 
     button {
@@ -70,74 +62,132 @@
       border-radius: 8px;
       cursor: pointer;
       font-size: 1.1rem;
-      transition: background-color 0.3s ease;
       margin-top: 10px;
     }
 
-    button:hover {
-      background-color: #2980b9;
-    }
+    button:hover { background-color: #2980b9; }
 
-    p#result {
-      margin-top: 20px;
+    #result {
+      margin-top: 18px;
       font-size: 1.2rem;
       font-weight: 600;
       text-align: center;
       color: #2c3e50;
     }
+
+    #steps {
+      margin-top: 15px;
+      background: #eef4ff;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    canvas {
+      margin-top: 20px;
+    }
+     @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <h2>Temperature Conversion</h2>
-    <label>Temperature:
-      <input type="number" id="temp" step="any" placeholder="Enter temperature" required>
-    </label>
-    <label>From:
-      <select id="fromTemp">
-        <option value="C">Celsius</option>
-        <option value="F">Fahrenheit</option>
-        <option value="K">Kelvin</option>
-      </select>
-    </label>
-    <label>To:
-      <select id="toTemp">
-        <option value="C">Celsius</option>
-        <option value="F">Fahrenheit</option>
-        <option value="K">Kelvin</option>
-      </select>
-    </label>
-    <button onclick="convertTemp()">Convert</button>
-    <p id="result"></p>
-  </div>
-  
-  <a href="{{ url_for('dashboard') }}" 
-  style="display:inline-block; margin-top:30px; padding:10px 20px; background:#3498db; color:white; border-radius:5px; text-decoration:none; font-weight:bold;">
+<div class="container">
+  <h2>Temperature Conversion</h2>
+
+  <label>Temperature:
+    <input type="number" id="temp" step="any" placeholder="Enter temperature">
+  </label>
+
+  <label>From:
+    <select id="fromTemp">
+      <option value="C">Celsius (°C)</option>
+      <option value="F">Fahrenheit (°F)</option>
+      <option value="K">Kelvin (K)</option>
+    </select>
+  </label>
+
+  <label>To:
+    <select id="toTemp">
+      <option value="C">Celsius (°C)</option>
+      <option value="F">Fahrenheit (°F)</option>
+      <option value="K">Kelvin (K)</option>
+    </select>
+  </label>
+
+  <button onclick="convertTemp()">Convert</button>
+
+  <p id="result"></p>
+  <div id="steps"></div>
+  <canvas id="tempChart" width="300" height="200"></canvas>
+</div>
+
+<a href="{{ url_for('dashboard') }}"
+ style="display:inline-block; margin-top:30px; padding:10px 20px;
+ background:#3498db; color:white; border-radius:5px;
+ text-decoration:none; font-weight:bold;">
  ← Back to Dashboard
 </a>
 
-  <script>
-    function convertTemp() {
-      let t = parseFloat(document.getElementById("temp").value);
-      const from = document.getElementById("fromTemp").value;
-      const to = document.getElementById("toTemp").value;
+<script>
+function convertTemp() {
+  let t = parseFloat(temp.value);
+  const from = fromTemp.value;
+  const to = toTemp.value;
 
-      if (isNaN(t)) {
-        document.getElementById("result").innerText = "Enter a valid temperature.";
-        return;
-      }
+  if (isNaN(t)) {
+    result.innerText = "Enter a valid temperature.";
+    return;
+  }
 
-      // Convert from 'from' unit to Celsius first
-      if (from === 'F') t = (t - 32) * 5 / 9;
-      else if (from === 'K') t = t - 273.15;
+  let celsius;
+  let stepText = `<strong>Step-by-step:</strong><br>`;
 
-      let converted;
-      if (to === 'C') converted = t;
-      else if (to === 'F') converted = (t * 9 / 5) + 32;
-      else if (to === 'K') converted = t + 273.15;
+  // Convert to Celsius
+  if (from === "C") {
+    celsius = t;
+    stepText += `Given in Celsius: ${t} °C<br>`;
+  }
+  else if (from === "F") {
+    celsius = (t - 32) * 5/9;
+    stepText += `(${t} − 32) × 5/9 = ${celsius.toFixed(2)} °C<br>`;
+  }
+  else {
+    celsius = t - 273.15;
+    stepText += `${t} − 273.15 = ${celsius.toFixed(2)} °C<br>`;
+  }
 
-      document.getElementById("result").innerText = `Converted Temperature: ${converted.toFixed(2)} °${to}`;
-    }
-  </script>
+  let converted;
+  if (to === "C") converted = celsius;
+  else if (to === "F") converted = (celsius * 9/5) + 32;
+  else converted = celsius + 273.15;
+
+  result.innerText = `Converted Temperature: ${converted.toFixed(2)} °${to}`;
+  stepText += `Final Conversion → ${converted.toFixed(2)} °${to}`;
+  steps.innerHTML = stepText;
+
+  // Visual bar chart
+  const ctx = tempChart.getContext("2d");
+  ctx.clearRect(0, 0, tempChart.width, tempChart.height);
+
+  const max = Math.max(Math.abs(t), Math.abs(converted));
+  const scale = 100 / max;
+
+  ctx.fillStyle = "#3498db";
+  ctx.fillRect(70, 150 - t * scale, 50, t * scale);
+  ctx.fillText("Input", 70, 170);
+
+  ctx.fillStyle = "#2ecc71";
+  ctx.fillRect(180, 150 - converted * scale, 50, converted * scale);
+  ctx.fillText("Output", 175, 170);
+}
+</script>
 </body>
 </html>

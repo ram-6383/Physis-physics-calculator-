@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hess Law</title>
+
+  <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      margin: auto;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+
+    .formula {
+      background: #f0f4f8;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 25px;
+    }
+
+    .visual h4 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #003366;
+      font-size: 1.05rem;
+    }
+
+    #hessPlot {
+      width: 100%;
+      min-height: 260px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 22px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      max-width: 260px;
+    }
+
+    @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Hess’s Law</h2>
+
+  <div class="formula">
+    ΔH<sub>reaction</sub> = Σ ΔH<sub>steps</sub>
+  </div>
+
+  <form method="POST">
+    <label>Enthalpy Change of Step 1 (ΔH₁) in J:</label>
+    <input type="number" name="H1" step="any" required>
+
+    <label>Enthalpy Change of Step 2 (ΔH₂) in J:</label>
+    <input type="number" name="H2" step="any" required>
+
+    <label>Enthalpy Change of Step 3 (ΔH₃) in J (optional):</label>
+    <input type="number" name="H3" step="any">
+
+    <button type="submit">Calculate Total Enthalpy Change</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+
+      <!-- STEP-BY-STEP EXPLANATION -->
+      <div class="result">
+        <strong>Step-by-Step Explanation:</strong><br><br>
+
+        1️⃣ ΔH₁ = {{ result.H1 }} J<br>
+        2️⃣ ΔH₂ = {{ result.H2 }} J<br>
+        3️⃣ ΔH₃ = {{ result.H3 }} J<br><br>
+
+        4️⃣ According to Hess’s Law, total enthalpy change is the sum of all steps.<br><br>
+
+        5️⃣ ΔH = ΔH₁ + ΔH₂ + ΔH₃<br>
+        &nbsp;&nbsp;ΔH = {{ result.H1 }} + {{ result.H2 }} + {{ result.H3 }}<br><br>
+
+        <strong>Total Enthalpy Change (ΔH) = {{ result.deltaH }} J</strong>
+      </div>
+
+      <!-- VISUAL -->
+      <div class="visual">
+        <h4>Visual Representation</h4>
+        <div id="hessPlot"></div>
+      </div>
+
+      <script>
+        const H1 = {{ result.H1 }};
+        const H2 = {{ result.H2 }};
+        const H3 = {{ result.H3 }};
+        const total = {{ result.deltaH }};
+
+        Plotly.newPlot(
+          'hessPlot',
+          [{
+            x: ['ΔH₁', 'ΔH₂', 'ΔH₃', 'Total ΔH'],
+            y: [H1, H2, H3, total],
+            type: 'bar',
+            marker: {
+              color: ['#3498db', '#e67e22', '#9b59b6', '#2ecc71']
+            }
+          }],
+          {
+            margin: { t: 30, l: 40, r: 20, b: 40 }
+          },
+          { responsive: true }
+        );
+      </script>
+
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

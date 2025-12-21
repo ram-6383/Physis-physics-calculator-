@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Maxwell Relations</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: auto;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 10px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 12px;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eaf2ff;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .explanation {
+      margin-top: 20px;
+      background: #ffffff;
+      border-left: 5px solid #007bff;
+      padding: 14px;
+      font-size: 0.95rem;
+    }
+
+    .visual {
+      margin-top: 25px;
+    }
+
+    #maxwellPlot {
+      width: 100%;
+      min-height: 260px;
+    }
+
+    a.back-link {
+      display: block;
+      margin: 20px auto 0;
+      text-align: center;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      max-width: 260px;
+    }
+    @media (max-width: 360px) {
+      h2 { font-size: 1.25rem; }
+      .result { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Maxwell Relations</h2>
+
+  <form method="POST">
+    <label>Select a Maxwell Relation:</label>
+    <select name="relation" required>
+      <option value="1">(∂T/∂V)ₛ = −(∂P/∂S)ᵥ</option>
+      <option value="2">(∂T/∂P)ₛ = (∂V/∂S)ₚ</option>
+      <option value="3">(∂S/∂V)ₜ = (∂P/∂T)ᵥ</option>
+      <option value="4">(∂S/∂P)ₜ = −(∂V/∂T)ₚ</option>
+    </select>
+
+    <button type="submit">Show Relation</button>
+  </form>
+
+  {% if result %}
+    {% if result.error %}
+      <p style="color:red;">{{ result.error }}</p>
+    {% else %}
+
+      <!-- RESULT -->
+      <div class="result">
+        {{ result.equation }}
+      </div>
+
+      <!-- STEP-BY-STEP EXPLANATION -->
+      <div class="explanation">
+        <strong>Step-by-Step Explanation:</strong>
+        <ul>
+          {% for step in result.explanation %}
+            <li>{{ step }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- VISUAL (CONCEPTUAL) -->
+      <div class="visual">
+        <div id="maxwellPlot"></div>
+      </div>
+
+      <script>
+        Plotly.newPlot(
+          'maxwellPlot',
+          [{
+            x: ['Thermodynamic Variables'],
+            y: [1],
+            type: 'bar',
+            text: ['Conceptual Thermodynamic Relation'],
+            textposition: 'auto',
+            marker: { color: '#3498db' }
+          }],
+          {
+            title: 'Conceptual Representation of Maxwell Relation',
+            margin: { t: 40 }
+          },
+          { responsive: true }
+        );
+      </script>
+
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ url_for('thermo_dashboard') }}" class="back-link">
+    ← Back to Thermodynamics
+  </a>
+</div>
+
+</body>
+</html>

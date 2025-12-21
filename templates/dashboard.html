@@ -2,6 +2,8 @@
 {% block title %}Dashboard - Physis{% endblock %}
 
 {% block content %}
+ <!-- REQUIRED FOR MOBILE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -60,6 +62,14 @@
   a:hover {
     color: #0056b3;
   }
+   @media (max-width: 360px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      .result {
+        font-size: 0.9rem;
+      }
+    }
 </style>
 
 <div class="dashboard-container">
@@ -80,6 +90,14 @@
     <li><a href="{{ url_for('volume_conversion') }}">Volume Conversion</a></li>
     <li><a href="{{ url_for('basic_physics_conversion') }}">Basic Physics Conversion</a></li>
     <li><a href="{{ url_for('temperature_conversion') }}">Temperature Conversion</a></li>
+    <li><a href="{{ url_for('circular_motion') }}">Circular Motion</a></li>
+    <li><a href="{{ url_for('doppler') }}">Doppler Effect</a></li>
+    <li><a href="{{ url_for('heat_transfer') }}">Heat Transfer</a></li>
+   <li><a href="{{ url_for('shm') }}">Simple Harmonic Motion</a></li>
+   <li><a href="{{ url_for('thermo_dashboard') }}">Thermodynamic Calculations</a></li>
+   <li><a href="{{ url_for('physics_constants') }}">📘 Physics Constants (SI & Advanced)</a></li>
+
+   
   </ul>
 </div>
 {% endblock %}
