@@ -2,28 +2,32 @@
 <html>
 <head>
   <title>Energy Conversion</title>
-   <!-- REQUIRED FOR MOBILE -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
+    * { box-sizing: border-box; }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f7fa;
-      padding: 40px;
+      padding: 20px 12px;
     }
 
     .container {
       max-width: 420px;
       margin: auto;
       background: white;
-      padding: 30px;
+      padding: 24px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden; /* 🔑 prevent overflow */
     }
 
     h2 {
       color: #003366;
       text-align: center;
       margin-bottom: 20px;
+      font-size: 1.5rem;
     }
 
     label {
@@ -58,53 +62,71 @@
       background-color: #0056b3;
     }
 
-    p {
+    /* ✅ RESULT FIX */
+    .result {
       text-align: center;
       margin-top: 20px;
-      font-size: 16px;
-      color: #333;
+      font-size: 1.1rem;
+      font-weight: 600;
+      word-break: break-word;   /* 🔑 */
+      overflow-wrap: anywhere;  /* 🔑 */
     }
 
     .error {
       color: red;
+      text-align: center;
     }
 
     .steps {
       margin-top: 20px;
       background: #eef4ff;
-      padding: 15px;
+      padding: 14px;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 0.9rem;
       line-height: 1.6;
+      word-break: break-word;
     }
 
+    /* ✅ RESPONSIVE CANVAS */
     canvas {
       display: block;
-      margin: 25px auto 0;
+      margin: 20px auto 0;
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      border: 1px solid #ddd;
+      border-radius: 6px;
     }
 
     a.back-link {
-      display:inline-block;
-      margin-top:30px;
-      padding:10px 20px;
-      background:#3498db;
-      color:white;
-      border-radius:5px;
-      text-decoration:none;
-      font-weight:bold;
+      display: block;
+      margin: 25px auto 0;
+      padding: 10px 20px;
+      background: #3498db;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      text-align: center;
+      max-width: 260px;
     }
-     @media (max-width: 360px) {
+
+    @media (max-width: 360px) {
       h2 {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
+      }
+      .container {
+        padding: 18px;
       }
       .result {
-        font-size: 0.9rem;
+        font-size: 1rem;
       }
     }
   </style>
 </head>
 
 <body>
+
   <div class="container">
     <h2>Joules to Electron Volts</h2>
 
@@ -117,46 +139,39 @@
 
     {% if result %}
       {% if result.ev %}
-        <p><strong>{{ result.ev }} eV</strong></p>
+        <div class="result">
+          {{ result.ev }} eV
+        </div>
 
         <div class="steps">
           <strong>Step-by-Step Explanation:</strong><br>
           1. Given Energy = {{ request.form.joules }} Joules<br>
           2. Conversion Constant: 1 eV = 1.602 × 10⁻¹⁹ Joules<br>
           3. Formula Used:<br>
-             Energy (eV) = Energy (J) ÷ 1.602 × 10⁻¹⁹<br>
+          Energy (eV) = Energy (J) ÷ 1.602 × 10⁻¹⁹<br>
           4. Final Converted Energy = {{ result.ev }} eV
         </div>
 
         <canvas id="energyChart" width="320" height="200"></canvas>
-<script>
-  const joules = {{ request.form.joules }};
-  const ev = {{ result.ev }};
 
-  const canvas = document.getElementById("energyChart");
-  const ctx = canvas.getContext("2d");
+        <script>
+          const canvas = document.getElementById("energyChart");
+          const ctx = canvas.getContext("2d");
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Normalize values for visualization
-  const joulesBar = 50;
-  const evBar = 120;
+          ctx.font = "12px Arial";
+          ctx.fillStyle = "#333";
+          ctx.fillText("Normalized comparison (relative scale)", 40, 20);
 
-  // Joules bar
-  ctx.fillStyle = "#3498db";
-  ctx.fillRect(70, 150 - joulesBar, 50, joulesBar);
-  ctx.fillText("Joules", 70, 170);
+          ctx.fillStyle = "#3498db";
+          ctx.fillRect(70, 150 - 50, 50, 50);
+          ctx.fillText("Joules", 70, 170);
 
-  // eV bar
-  ctx.fillStyle = "#2ecc71";
-  ctx.fillRect(180, 150 - evBar, 50, evBar);
-  ctx.fillText("eV", 190, 170);
-
-  ctx.font = "12px Arial";
-  ctx.fillStyle = "#333";
-  ctx.fillText("Normalized comparison (relative scale)", 60, 20);
-</script>
-
+          ctx.fillStyle = "#2ecc71";
+          ctx.fillRect(180, 150 - 120, 50, 120);
+          ctx.fillText("eV", 190, 170);
+        </script>
 
       {% else %}
         <p class="error">{{ result.error }}</p>
@@ -167,5 +182,6 @@
   <a href="{{ url_for('dashboard') }}" class="back-link">
     ← Back to Dashboard
   </a>
+
 </body>
 </html>

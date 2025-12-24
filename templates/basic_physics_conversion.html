@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Basic Physics Conversion</title>
-   <!-- REQUIRED FOR MOBILE -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f0f4f8;
@@ -33,6 +37,7 @@
       color: #0066cc;
     }
 
+    /* INPUT + BUTTON (DESKTOP DEFAULT) */
     input[type="number"] {
       padding: 10px;
       width: 65%;
@@ -71,11 +76,37 @@
       padding: 10px;
       border-radius: 6px;
     }
-     @media (max-width: 360px) {
-      h2 {
-        font-size: 1.25rem;
+
+    /* ✅ MOBILE FIX */
+    @media (max-width: 600px) {
+
+      body {
+        padding: 16px;
       }
-      .result {
+
+      h2 {
+        font-size: 1.4rem;
+      }
+
+      .conversion {
+        padding: 18px;
+      }
+
+      input[type="number"] {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      button {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      p.result {
+        font-size: 0.95rem;
+      }
+
+      p.steps {
         font-size: 0.9rem;
       }
     }
@@ -83,9 +114,9 @@
 </head>
 
 <body>
+
 <h2>Basic Physics Conversions</h2>
 
-<!-- Newton to Dyne -->
 <div class="conversion">
   <h4>Newton to Dyne</h4>
   <input type="number" id="newton" placeholder="Enter Newton">
@@ -94,7 +125,6 @@
   <p class="steps" id="ndSteps"></p>
 </div>
 
-<!-- Joule to Calorie -->
 <div class="conversion">
   <h4>Joule to Calorie</h4>
   <input type="number" id="joule" placeholder="Enter Joule">
@@ -103,7 +133,6 @@
   <p class="steps" id="jcSteps"></p>
 </div>
 
-<!-- Pascal to Atmosphere -->
 <div class="conversion">
   <h4>Pascal to Atmosphere</h4>
   <input type="number" id="pascal" placeholder="Enter Pascal">
@@ -112,7 +141,6 @@
   <p class="steps" id="paSteps"></p>
 </div>
 
-<!-- Watt to Horsepower -->
 <div class="conversion">
   <h4>Watt to Horsepower</h4>
   <input type="number" id="watt" placeholder="Enter Watt">
@@ -121,7 +149,6 @@
   <p class="steps" id="whSteps"></p>
 </div>
 
-<!-- eV to Joule -->
 <div class="conversion">
   <h4>Electron Volt to Joule</h4>
   <input type="number" id="ev" placeholder="Enter eV">
@@ -136,7 +163,6 @@
  text-decoration:none; font-weight:bold;">
  ← Back to Dashboard
 </a>
-
 <script>
 function convertND() {
   const v = parseFloat(newton.value);

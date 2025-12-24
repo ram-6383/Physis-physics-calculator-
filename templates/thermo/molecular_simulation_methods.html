@@ -167,6 +167,14 @@
           { title: '{{ result.method }} Output' },
           { responsive: true }
         );
+        const isMobile = window.innerWidth < 480;
+
+const plotConfig = {
+  responsive: true,
+  displayModeBar: !isMobile,
+  displaylogo: false
+};
+
       </script>
     {% endif %}
   {% endif %}

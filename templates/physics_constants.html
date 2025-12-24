@@ -79,6 +79,34 @@
       h3 { font-size: 1.05rem; }
       table { font-size: 0.85rem; }
     }
+    /* 🔹 LAPTOP / DESKTOP COMPACT VIEW FIX */
+@media (min-width: 992px) {
+
+  .container {
+    max-width: 1100px;   /* was full width → now balanced */
+  }
+
+  table {
+    font-size: 0.9rem;   /* slightly smaller for laptop */
+  }
+
+  th, td {
+    padding: 6px 8px;    /* reduce spacing */
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.15rem;
+  }
+
+  h4 {
+    font-size: 1.05rem;
+  }
+}
+
   </style>
 </head>
 
@@ -89,6 +117,7 @@
 
   <!-- 1. Defining Constants -->
   <h3>1️⃣ Defining (Exact) SI Constants</h3>
+  <div class="table-wrapper">
   <table>
     <tr><th>Constant</th><th>Symbol</th><th>Exact Value</th><th>Unit</th></tr>
     <tr><td>Speed of Light</td><td>c</td><td>299,792,458</td><td>m/s</td></tr>
@@ -97,27 +126,33 @@
     <tr><td>Boltzmann Constant</td><td>k</td><td>1.380649×10⁻²³</td><td>J/K</td></tr>
     <tr><td>Avogadro Constant</td><td>Nₐ</td><td>6.02214076×10²³</td><td>mol⁻¹</td></tr>
   </table>
+  </div>
 
   <!-- 2. Universal Constants -->
   <h3>2️⃣ Universal & Gravitational Constants</h3>
+  <div class="table-wrapper">
   <table>
     <tr><th>Constant</th><th>Symbol</th><th>Value</th><th>Unit</th></tr>
     <tr><td>Gravitational Constant</td><td>G</td><td>6.67430×10⁻¹¹</td><td>N·m²/kg²</td></tr>
     <tr><td>Reduced Planck Constant</td><td>ħ</td><td>1.0545718×10⁻³⁴</td><td>J·s</td></tr>
     <tr><td>Standard Gravity</td><td>g</td><td>9.80665</td><td>m/s²</td></tr>
   </table>
+  </div>
 
   <!-- 3. Electromagnetic -->
   <h3>3️⃣ Electromagnetic Constants</h3>
+ <div class="table-wrapper">
   <table>
     <tr><th>Constant</th><th>Symbol</th><th>Value</th><th>Unit</th></tr>
     <tr><td>Permittivity of Free Space</td><td>ε₀</td><td>8.8541878×10⁻¹²</td><td>F/m</td></tr>
     <tr><td>Permeability of Free Space</td><td>μ₀</td><td>4π×10⁻⁷</td><td>T·m/A</td></tr>
     <tr><td>Coulomb Constant</td><td>kₑ</td><td>8.98755×10⁹</td><td>N·m²/C²</td></tr>
   </table>
+  </div>
 
   <!-- 4. Thermodynamics -->
   <h3>4️⃣ Thermodynamic & Radiation Constants</h3>
+  <div class="table-wrapper">
   <table>
     <tr><th>Constant</th><th>Symbol</th><th>Value</th><th>Unit</th></tr>
     <tr><td>Gas Constant</td><td>R</td><td>8.314462618</td><td>J/mol·K</td></tr>
@@ -125,18 +160,21 @@
     <tr><td>Wien Constant</td><td>b</td><td>2.89777×10⁻³</td><td>m·K</td></tr>
     <tr><td>Faraday Constant</td><td>F</td><td>96485.33</td><td>C/mol</td></tr>
   </table>
+  </div>
 
   <!-- 5. Atomic & Particle -->
   <h3>5️⃣ Atomic & Particle Constants</h3>
+ <div class="table-wrapper">
   <table>
     <tr><th>Particle</th><th>Symbol</th><th>Mass (kg)</th></tr>
     <tr><td>Electron</td><td>mₑ</td><td>9.1093837×10⁻³¹</td></tr>
     <tr><td>Proton</td><td>mₚ</td><td>1.6726219×10⁻²⁷</td></tr>
     <tr><td>Neutron</td><td>mₙ</td><td>1.6749275×10⁻²⁷</td></tr>
   </table>
-
+</div>
   <!-- 6. Dimensionless -->
   <h3>6️⃣ Dimensionless & Mathematical Constants</h3>
+  <div class="table-wrapper">
   <table>
     <tr><th>Constant</th><th>Symbol</th><th>Value</th></tr>
     <tr><td>Fine-Structure Constant</td><td>α</td><td>1/137.036</td></tr>
@@ -144,8 +182,10 @@
     <tr><td>Euler’s Number</td><td>e</td><td>2.71828</td></tr>
     <tr><td>Golden Ratio</td><td>φ</td><td>1.61803</td></tr>
   </table>
+  </div>
 <h3>7️⃣ Seven SI Base Units (Revised SI)</h3>
-<table>
+<div class="table-wrapper">
+  <table>
   <tr>
     <th>Physical Quantity</th>
     <th>SI Unit</th>
@@ -195,7 +235,9 @@
     <td>Luminous efficacy (K<sub>cd</sub>)</td>
   </tr>
 </table>
+</div>
 <h3>8️⃣ Derived SI Units with Special Names</h3>
+<div class="table-wrapper">
 <table>
   <tr>
     <th>Quantity</th>
@@ -233,10 +275,12 @@
   <tr><td>Equivalent Dose</td><td>sievert</td><td>Sv</td><td>J/kg</td></tr>
   <tr><td>Catalytic Activity</td><td>katal</td><td>kat</td><td>mol/s</td></tr>
 </table>
+</div>
 <h3>9️⃣ SI Prefixes (2025 Standard)</h3>
 
 <h4>Large Multiples</h4>
-<table>
+<div class="table-wrapper">
+  <table>
   <tr><th>Prefix</th><th>Symbol</th><th>Power</th></tr>
   <tr><td>kilo</td><td>k</td><td>10³</td></tr>
   <tr><td>mega</td><td>M</td><td>10⁶</td></tr>
@@ -249,9 +293,11 @@
   <tr><td>ronna</td><td>R</td><td>10²⁷</td></tr>
   <tr><td>quetta</td><td>Q</td><td>10³⁰</td></tr>
 </table>
+</div>
 
 <h4>Small Multiples</h4>
-<table>
+<div class="table-wrapper">
+  <table>   
   <tr><th>Prefix</th><th>Symbol</th><th>Power</th></tr>
   <tr><td>centi</td><td>c</td><td>10⁻²</td></tr>
   <tr><td>milli</td><td>m</td><td>10⁻³</td></tr>
@@ -265,6 +311,7 @@
   <tr><td>ronto</td><td>r</td><td>10⁻²⁷</td></tr>
   <tr><td>quecto</td><td>q</td><td>10⁻³⁰</td></tr>
 </table>
+</div>
 
   <a href="{{ url_for('dashboard') }}" class="back-link">
     ← Back to Dashboard
